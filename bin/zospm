@@ -304,7 +304,7 @@ refresh() {
 	callerdir=`callerdir $0`
 	zospmroot="${callerdir}/.."
 	if [ "${sw}" = "zospm" ]; then
-		root="${zospmroot}"
+		root="${ZOSPM_REPOROOT}/zospm"
 	else
 		root="${ZOSPM_REPOROOT}/zospm-${sw}"
 	fi
