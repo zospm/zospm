@@ -1,7 +1,7 @@
 # zospm
 _zospm_ is an experimental idea for z/OS package management.
 
-_zospm_ lets you search, secure, install, and configure software on z/OS using a prescriptive approach, 
+_zospm_ lets you search, secure, install and configure software on z/OS using a prescriptive approach, 
 especially with respect to naming conventions for the software. 
 
 ***zospm Development Philosophy***
