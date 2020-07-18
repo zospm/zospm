@@ -23,7 +23,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -39,8 +39,8 @@ Examples:
 	Disable BGZ106 as part of product 5737-I22 with product entry
         	swregistrar bgz106 disable 5737-I22
 Note:
-	The PDS \${ZBREW_ROOT}PARMLIB is created if it does not already exist
-	The PDS member IFAPRD\${ZBREW_PARMLIB_SFX} is created if it does not already exist
+	The PDS \${ZOSPM_ROOT}PARMLIB is created if it does not already exist
+	The PDS member IFAPRD\${ZOSPM_PARMLIB_SFX} is created if it does not already exist
 	The PDS member will have the new product enablement text appended if 'enable' is specified.
 	The PDS member will have the product enablement text removed if 'disable' is specified.
 	Enabling a product that already has an entry is an error.
@@ -93,10 +93,10 @@ sfx="*/"
 header="${pfx} --- ${sw}:${id} start --- ${sfx}"
 footer="${pfx} --- ${sw}:${id} end   --- ${sfx}"
 
-. zbrewsetenv
+. zospmsetenv
 
-parmlibds="${ZBREW_TGT_HLQ}PARMLIB"
-member="IFAPRD${ZBREW_PARMLIB_SFX}"
+parmlibds="${ZOSPM_TGT_HLQ}PARMLIB"
+member="IFAPRD${ZOSPM_PARMLIB_SFX}"
 
 registrar "${sw}" "${verb}" "${parmlibds}" "${member}" "${header}" "${footer}" "${pfx}" "${sfx}" "${text}"
 exit $?

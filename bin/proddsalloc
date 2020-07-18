@@ -24,7 +24,7 @@ msg() {
                 ${PrefixTooLong}) msgtext="Prefix must be 6 characters or less. Received: ";;
                 *) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
         esac
-        echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+        echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 
@@ -46,7 +46,7 @@ crtzfs() {
 		return $rc
 	fi
 
-	cmdout="${ZBREW_TMP}/cmd.out"
+	cmdout="${ZOSPM_TMP}/cmd.out"
 	touch "${cmdout}"
 
 	mvscmdauth --pgm=IDCAMS --sysprint="${cmdout}" --sysin=stdin <<zzz
@@ -115,13 +115,13 @@ if [ $# -lt 1 ]; then
         exit 16
 fi
 
-. zbrewsetenv
+. zospmsetenv
 sw=$1
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
 zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 prefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
 
-smpelibs="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}bom.json"
+smpelibs="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}bom.json"
 ussname=$(echo ${ussname} | tr '[:lower:]' '[:upper:]')
 
 libs=`readbom ${ussname} <${smpelibs}`
@@ -132,9 +132,9 @@ if [ $rc -gt 0 ]; then
 fi
 
 # Obtain list of all Target and Distribution Datasets to allocate, exclude ZFS
-pdslist=`echo "${libs}" | awk -v pfx="${ZBREW_SRC_HLQ}${ussname}." '($2 == "PDS") {print pfx$1" -t"$2" -r"$3" -l"$4" -b"$8" -s"$5*56"K"}'`
-zfslist=`echo "${libs}" | awk -v pfx="${ZBREW_SRC_HLQ}${ussname}." '($2 == "ZFS") {print pfx$1" "$3" "$4" "$7" "$8}'`
-othlist=`echo "${libs}" | awk -v pfx="${ZBREW_SRC_HLQ}${ussname}." '($2 != "C" && $2 != "ZFS" && $2 != "PDS") {print pfx$1" -t"$2" -r"$3" -l"$4" -s"$5*56"K"}'`
+pdslist=`echo "${libs}" | awk -v pfx="${ZOSPM_SRC_HLQ}${ussname}." '($2 == "PDS") {print pfx$1" -t"$2" -r"$3" -l"$4" -b"$8" -s"$5*56"K"}'`
+zfslist=`echo "${libs}" | awk -v pfx="${ZOSPM_SRC_HLQ}${ussname}." '($2 == "ZFS") {print pfx$1" "$3" "$4" "$7" "$8}'`
+othlist=`echo "${libs}" | awk -v pfx="${ZOSPM_SRC_HLQ}${ussname}." '($2 != "C" && $2 != "ZFS" && $2 != "PDS") {print pfx$1" -t"$2" -r"$3" -l"$4" -s"$5*56"K"}'`
 
 crtds "${pdslist}"
 rc=$?
@@ -150,7 +150,7 @@ if [ $rc -gt 0 ]; then
         exit $rc
 fi
 
-root="${ZBREW_SRC_ZFSROOT}"
+root="${ZOSPM_SRC_ZFSROOT}"
 echo "${zfslist}" | while read -r zfs; do
 	crtzfs ${zfs}
 	rc=$?

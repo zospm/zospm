@@ -24,12 +24,12 @@ msg() {
 		${TooFewParms}) msgtext="Too few Parameters specified. Expected 2 but received: ";;
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		${InvalidWorkDir}) msgtext="Unknown working directory specified: ";;
-		${WorkDirRequired}) msgtext="Working directory must be specified via -w option or through ZBREW_WORKROOT ";;
+		${WorkDirRequired}) msgtext="Working directory must be specified via -w option or through ZOSPM_WORKROOT ";;
 		${InvalidRepoDir}) msgtext="Unknown respository directory specified: ";;
-		${RepoDirRequired}) msgtext="Repository directory must be specified via ZBREW_REPOROOT ";;
+		${RepoDirRequired}) msgtext="Repository directory must be specified via ZOSPM_REPOROOT ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -37,30 +37,30 @@ msg() {
 #
 syntax() {
 	echo "\
-zbrew [-cvdfrw] search|order|smpreceiveptf|install|update|receivezos|configure|deconfigure|uninstall <software>
+zospm [-cvdfrw] search|order|smpreceiveptf|install|update|receivezos|configure|deconfigure|uninstall <software>
 	and <software> is the software to search for
 	(Note that install invokes several functions which are: ${install_verbs})
 	-c: clean files before processing (e.g. delete SMP/E CSI datasets) 
 	-f: forces SMP/E processing to continue through apply checks and other processing when RC=4 
 	-r function_name install: restart install at specific function (function_name must be one of: ${install_verbs})
 	   If concatenating options and using -r it must be the last option..  (eg -cvr)
-	-w workdir: specify the work directory zbrew should use. 
-	   The zbrew work root directory can alternately be specified with ZBREW_WORKROOT environment variable.
+	-w workdir: specify the work directory zospm should use. 
+	   The zospm work root directory can alternately be specified with ZOSPM_WORKROOT environment variable.
 
 Note:
-	zbrew has files it needs to operate. You provide these files under the directory ZBREW_WORKROOT (see the -w option)
-	ZBREW_WORKROOT has the following files and directories under it:
-	props/zbrewglobalprops.json:	Global properties used for installation and configuration of software packages
+	zospm has files it needs to operate. You provide these files under the directory ZOSPM_WORKROOT (see the -w option)
+	ZOSPM_WORKROOT has the following files and directories under it:
+	props/zospmglobalprops.json:	Global properties used for installation and configuration of software packages
 	props/<software>properties.json:Properties used for installation and configuration of the software package <software>
 	order:				Directory of ORDER files describing how software package <software> can be installed
 	pkg:				Directory of software packages to be installed from Passport Advantage
 	config:				Directory containing generated scripts for configuration of software
 	deconfig:			Directory containing generated scripts for de-configuration (removal) of software
 
-	zbrew looks for software package information in ZBREW_REPOROOT. If not specified, ZBREW_REPOROOT defaults to 
-	the directory that zbrew is installed into.
+	zospm looks for software package information in ZOSPM_REPOROOT. If not specified, ZOSPM_REPOROOT defaults to 
+	the directory that zospm is installed into.
 
-Here is a sample order file for COBOL 6.3.0 you would create at \${ZBREW_WORKROOT}/order/igy630order.json
+Here is a sample order file for COBOL 6.3.0 you would create at \${ZOSPM_WORKROOT}/order/igy630order.json
 {
    "software": [{
    "name":"IGY630",
@@ -77,21 +77,21 @@ Here is a sample order file for COBOL 6.3.0 you would create at \${ZBREW_WORKROO
 }
 
 	    
-zbrew Examples:
-	zbrew search cobol     <-- search for products with COBOL in their description
-	zbrew order igy630     <-- submit an order for IGY630 software (receive can not be performed until complete)
-	zbrew refresh zbrew    <-- refresh the zbrew package manager from the server
-	zbrew refresh igy      <-- refresh the COBOL package definition from the server
-	zbrew install igy630   <-- check that all pre-reqs required for COBOL are satisfied, then SMP/E RECEIVE/APPLY/ACCEPT the product (with and w/o CHECK)
-	zbrew -w /zbrew/workroot install igy630   <-- install COBOL compiler, specifying the zbrew workroot directory as /zbrew/workroot
-	zbrew -c -v install igy630   <-- do uninstall first and then verbose install
-	zbrew -r smpconfig install igy630   <-- restart install at the smpconfig step
-	zbrew -fr smpapplycheck install igy630   <-- restart install at the smpapplycheck step and ALLOW RC=4
-	zbrew update igy630 <-- apply all PTFs currently in receive status 
-	zbrew uninstall igy630 <-- remove all SMP/E datasets and product-specific datasets/filesystems
-	zbrew configure igy630 <-- run product-specific configuration after SMP/E APPLY step
-	zbrew deconfigure igy630 <-- run product-specific configuration removal after SMP/E APPLY step
-	zbrew smpreceiveptf igy630 zos.file.name <-- receive a PTF from a z/OS sequential or PDS file
+zospm Examples:
+	zospm search cobol     <-- search for products with COBOL in their description
+	zospm order igy630     <-- submit an order for IGY630 software (receive can not be performed until complete)
+	zospm refresh zospm    <-- refresh the zospm package manager from the server
+	zospm refresh igy      <-- refresh the COBOL package definition from the server
+	zospm install igy630   <-- check that all pre-reqs required for COBOL are satisfied, then SMP/E RECEIVE/APPLY/ACCEPT the product (with and w/o CHECK)
+	zospm -w /zospm/workroot install igy630   <-- install COBOL compiler, specifying the zospm workroot directory as /zospm/workroot
+	zospm -c -v install igy630   <-- do uninstall first and then verbose install
+	zospm -r smpconfig install igy630   <-- restart install at the smpconfig step
+	zospm -fr smpapplycheck install igy630   <-- restart install at the smpapplycheck step and ALLOW RC=4
+	zospm update igy630 <-- apply all PTFs currently in receive status 
+	zospm uninstall igy630 <-- remove all SMP/E datasets and product-specific datasets/filesystems
+	zospm configure igy630 <-- run product-specific configuration after SMP/E APPLY step
+	zospm deconfigure igy630 <-- run product-specific configuration removal after SMP/E APPLY step
+	zospm smpreceiveptf igy630 zos.file.name <-- receive a PTF from a z/OS sequential or PDS file
 " >&2 
 	exit 16
 }
@@ -100,12 +100,12 @@ zbrew Examples:
 # Temporary hack - replace with call to IBM-managed server (ShopZ) to get proper list
 #
 search() {
-	zbrewlog "search" $*
+	zospmlog "search" $*
 	search=$1
 	callerdir=`callerdir $0`
-	grep -i "${search}" ${callerdir}/../zbrew.software
+	grep -i "${search}" ${callerdir}/../zospm.software
 	rc=$?
-	zbrewlog "search RC: ${rc}"
+	zospmlog "search RC: ${rc}"
 	return ${rc}
 }
 
@@ -116,27 +116,27 @@ opts=$*
 # for the RECEIVE
 #
 order() {
-	zbrewlog "order" $*
+	zospmlog "order" $*
 	# currently no-op.
 	if [ ${verbose} -gt 0 ]; then
 		echo "order $1" >&2
 	fi
-	zbrewlog "order RC: ${rc}"
+	zospmlog "order RC: ${rc}"
 	return 0
 }
 
 latestBinary() {
 	binserver="$1"
 	sw="$2"
-	tmpa="${ZBREW_TMP}/zbrewpkgs_a.$$.txt"
+	tmpa="${ZOSPM_TMP}/zospmpkgs_a.$$.txt"
 
-	if [ "${sw}" = "zbrew" ]; then
-		binname='zbrew'
+	if [ "${sw}" = "zospm" ]; then
+		binname='zospm'
 	else
-		binname="zbrew-${sw}"
+		binname="zospm-${sw}"
 	fi
 
-	httpsget -o "${tmpa}" "${binserver}/zbrew"
+	httpsget -o "${tmpa}" "${binserver}/zospm"
 	rc=$?
 	if [ $rc -gt 0 ]; then
 		return $rc
@@ -160,10 +160,10 @@ latestBinary() {
 
 updateInPlace() {
 	sw="$1"
-	zbrewroot="$2"
+	zospmroot="$2"
 	root="$3"
-	gitserver="${ZBREW_GITSERVER}"
-	binserver="${ZBREW_BINSERVER}"
+	gitserver="${ZOSPM_GITSERVER}"
+	binserver="${ZOSPM_BINSERVER}"
 
 	if [ -d "${root}" ]; then 
 		# Directory exists, this is an 'update', not a 'create'
@@ -175,9 +175,9 @@ updateInPlace() {
 			repotype="bin"
 		fi
 	else 
-		# Package does not exist yet. Look to zbrewroot to determine if git or bintray
+		# Package does not exist yet. Look to zospmroot to determine if git or bintray
 		repoaction="create"
-		if [ -d "${zbrewroot}/.git" ]; then
+		if [ -d "${zospmroot}/.git" ]; then
 			repotype="src"
 		else
 			repotype="bin"
@@ -192,7 +192,7 @@ updateInPlace() {
 		fi
 	fi	
 
-	tmpscript="${ZBREW_TMP}/$$.updateinplace.sh"
+	tmpscript="${ZOSPM_TMP}/$$.updateinplace.sh"
 	cat >"${tmpscript}" <<'zz'
 #!/bin/sh
 #set -x
@@ -205,10 +205,10 @@ repotype="$5"
 repoaction="$6"
 drop="$7"
 
-if [ "${sw}" = "zbrew" ]; then
-	qualsw="zbrew"
+if [ "${sw}" = "zospm" ]; then
+	qualsw="zospm"
 else
-	qualsw="zbrew-${sw}"
+	qualsw="zospm-${sw}"
 fi
 
 if [ "${repoaction}" = "create" ]; then
@@ -241,7 +241,7 @@ if [ "${repotype}" = "src" ]; then
 	fi
 else
 	if [ "${repoaction}" = "update" ]; then
-		# Triple check that we are really in a valid '$root' binary repo by looking for zbrew-<sw>.bom file
+		# Triple check that we are really in a valid '$root' binary repo by looking for zospm-<sw>.bom file
 		readme="README.md"
 		if ! [ -f "${readme}" ]; then
 			echo "UpdateInPlace: The root directory ${root} does not contain the file ${readme} but a refresh was requested. No refresh performed." >&2
@@ -254,8 +254,8 @@ else
 			exit $rc
 		fi
 	fi
-	paxfile="${ZBREW_TMP}/${qualsw}_${drop}.pax"
-	httpsget -o "${paxfile}" "${binserver}/zbrew/${qualsw}_${drop}.pax"
+	paxfile="${ZOSPM_TMP}/${qualsw}_${drop}.pax"
+	httpsget -o "${paxfile}" "${binserver}/zospm/${qualsw}_${drop}.pax"
 	rc=$?
 	if [ $rc -gt 0 ]; then
 		echo "Unable to find a binary package of ${qualsw} on ${binserver}" >&2
@@ -290,42 +290,42 @@ zz
 	fi	
 	"${tmpscript}" "${sw}" "${root}" "${gitserver}" "${binserver}" "${repotype}" "${repoaction}" "${drop}" 
 
-	# Have an 'exit' here because this code may have now been updated beneath our feet (with zbrew refresh)
+	# Have an 'exit' here because this code may have now been updated beneath our feet (with zospm refresh)
 	exit $?
 }
 
 refresh() {
 	sw=$(echo $1 | tr '[:upper:]' '[:lower:]');
-	zbrewlog "refresh $sw"
+	zospmlog "refresh $sw"
 
 	if [ ${verbose} -gt 0 ]; then
 		echo "refresh $sw" >&2
 	fi
 	callerdir=`callerdir $0`
-	zbrewroot="${callerdir}/.."
-	if [ "${sw}" = "zbrew" ]; then
-		root="${zbrewroot}"
+	zospmroot="${callerdir}/.."
+	if [ "${sw}" = "zospm" ]; then
+		root="${zospmroot}"
 	else
-		root="${ZBREW_REPOROOT}/zbrew-${sw}"
+		root="${ZOSPM_REPOROOT}/zospm-${sw}"
 	fi
-	updateInPlace "${sw}" "${zbrewroot}" "${root}" 
+	updateInPlace "${sw}" "${zospmroot}" "${root}" 
 }
 
 receive() {
-	props="${ZBREW_WORKROOT}/order/${ussname}order.json"
-	zbrewpropse "${ussname}" order "${props}"
+	props="${ZOSPM_WORKROOT}/order/${ussname}order.json"
+	zospmpropse "${ussname}" order "${props}"
 		
 	if [ ${verbose} -gt 0 ]; then
 		echo "Performing SMP/E Receive $*" >&2
 	fi      
 	case ${SMPE_DELIVERY} in
 		SHOPZ)
-			zbrewlog "Receiving from ShopZ for: "${sw}
+			zospmlog "Receiving from ShopZ for: "${sw}
 			out=`smpfromshopz ${opts} ${sw}`
 			rc=$?
 			;;
 		PPA)
-			zbrewlog "Receiving from PPA for: "${sw}
+			zospmlog "Receiving from PPA for: "${sw}
 			out=`smpfromppa ${opts} ${sw}`
 			rc=$?
 			if [ ${rc} -eq 0 ]; then
@@ -334,7 +334,7 @@ receive() {
 			fi	
 			;;
 		LOCAL)
-			zbrewlog "Receiving from LOCAL NTS for: "${sw}
+			zospmlog "Receiving from LOCAL NTS for: "${sw}
 			out=`smpfromnts ${opts} ${sw}`
 			rc=$?
 			;;
@@ -347,11 +347,11 @@ receive() {
 }
 
 prodreq() {
-	zbrewlog "prodreq" $*
+	zospmlog "prodreq" $*
 		
-	tmp_frspace=$(df -k ${ZBREW_TMP} | tail -1 | awk '{print $3}' | awk -F'/' '{print $1}')
-	if [ "${tmp_frspace}" -lt "${ZBREW_TMP_MINSPACE}" ]; then
-		zfstmpinf=`df -kP ${ZBREW_TMP} | awk '!/Filesystem/ {print $1,$2,$4}'`
+	tmp_frspace=$(df -k ${ZOSPM_TMP} | tail -1 | awk '{print $3}' | awk -F'/' '{print $1}')
+	if [ "${tmp_frspace}" -lt "${ZOSPM_TMP_MINSPACE}" ]; then
+		zfstmpinf=`df -kP ${ZOSPM_TMP} | awk '!/Filesystem/ {print $1,$2,$4}'`
 		arinx=0
 		for words in ${zfstmpinf}; do
 		        zfsparm[$arinx]=${words}
@@ -360,11 +360,11 @@ prodreq() {
 		zfstmpnm=${zfsparm[0]}
 		zfstmpts=${zfsparm[1]}
 		zfstmpas=${zfsparm[2]}
-		newsize=`expr ${ZBREW_TMP_MINSPACE} - ${zfstmpas} + ${zfstmpts}`
+		newsize=`expr ${ZOSPM_TMP_MINSPACE} - ${zfstmpas} + ${zfstmpts}`
 		resizezfs=`zfsadm grow -aggregate "$zfstmpnm" -s "${newsize}"`
 		rc=$?
 		if [ "${rc}" != "0" ]; then
-			echo "Warning, ${ZBREW_TMP} is low on free space, it is recommended to have at least ${ZBREW_TMP_MINSPACE} KB available" >&2
+			echo "Warning, ${ZOSPM_TMP} is low on free space, it is recommended to have at least ${ZOSPM_TMP_MINSPACE} KB available" >&2
 			echo "Current free space available is: ${tmp_frspace} KB" >&2
 		        echo "zBrew Failed to automatically extend zfs ${zfstmpnm} to new size: ${newsize}. Return code: ${rc}" >&2
 			rc=16		
@@ -377,7 +377,7 @@ prodreq() {
 	if [ ${verbose} -gt 0 ]; then
 		echo "Checking requisites ${opts} ${sw}" >&2
 	fi
-	SWDIR="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/"
+	SWDIR="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/"
 	json="${SWDIR}${ussname}req.json"
 	if [ -f "${json}" ]; then
 		smpchkreq ${opts} ${ussname} ${json}
@@ -391,9 +391,9 @@ prodreq() {
 update() {
 	export ALLPTFS=1
 	baseopts="${opts}"
-	for zbrewfunc in ${update_verbs}; do
+	for zospmfunc in ${update_verbs}; do
 		opts="${baseopts}"
-		runfunc="${zbrewfunc}"
+		runfunc="${zospmfunc}"
                 if [ "${runfunc}" = "smpapplycheck" ]; then
                         opts="$opts -p -t"
                         runfunc="smpappacc"
@@ -404,8 +404,8 @@ update() {
                 fi
                 out=`${runfunc} ${opts} ${sw}`
                 rc=$?
-		zbrewlog "${runfunc} ${opts}" $*
-                zbrewlog "${runfunc} RC: ${rc}"
+		zospmlog "${runfunc} ${opts}" $*
+                zospmlog "${runfunc} RC: ${rc}"
                 if [ "$rc" -gt 0 ] || [ "$verbose" -gt 0 ]; then
                         echo "${out}" >&2
                 fi
@@ -421,11 +421,11 @@ update() {
 
 install() {
 	export ALLPTFS=0
-	zbrewlog "install" $*
+	zospmlog "install" $*
 	baseopts="$opts"
-	for zbrewfunc in ${install_verbs}; do
+	for zospmfunc in ${install_verbs}; do
 		opts="${baseopts}"
-		runfunc="${zbrewfunc}"
+		runfunc="${zospmfunc}"
 		if [ "${runfunc}" = "smpapplycheck" ]; then
 			opts="$baseopts -p"
 			runfunc="smpappacc"
@@ -442,12 +442,12 @@ install() {
 			opts="$baseopts -s"
                         runfunc="smpappacc"
                 fi
-                if [ "${runfunc}" = "zbrewarchive" ]; then
+                if [ "${runfunc}" = "zospmarchive" ]; then
 			opts=""
                 fi
 
 		if [ "${restart}" != "NORESTART" ]; then
-			if [ "${zbrewfunc}" != "${restart}" ]; then
+			if [ "${zospmfunc}" != "${restart}" ]; then
 				continue
 			else
 				restart="NORESTART"
@@ -455,7 +455,7 @@ install() {
 		fi
 		out=`${runfunc} ${opts} ${sw}`
 		rc=$?
-		zbrewlog "${runfunc} RC: ${rc}"
+		zospmlog "${runfunc} RC: ${rc}"
 		if [ "$rc" -gt 0 ] || [ "$verbose" -gt 0 ]; then
 			echo "${out}" >&2
 		fi
@@ -467,7 +467,7 @@ install() {
 }
 
 configure() {
-	zbrewlog "configure" $*
+	zospmlog "configure" $*
 
         ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
         zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
@@ -476,40 +476,40 @@ configure() {
 	        echo "configure ${opts} ${sw}" >&2
 	fi
 
-	dls "${ZBREW_TGT_HLQ}${zosname}.*" >/dev/null 2>&1
+	dls "${ZOSPM_TGT_HLQ}${zosname}.*" >/dev/null 2>&1
 	if [ $? -eq 0 ]; then
-		echo "Datasets of pattern: ${ZBREW_TGT_HLQ}${zosname}.* already exist. Configuration aborted." >&2
+		echo "Datasets of pattern: ${ZOSPM_TGT_HLQ}${zosname}.* already exist. Configuration aborted." >&2
 		return 16
 	fi 
-	prodconfig="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}config"
+	prodconfig="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}config"
         if ! [ -f "${prodconfig}" ]; then
 		echo "Unable to find product configuration program: ${prodconfig} for ${ussname}. Configure failed." >&2
-		zbrewlog "configure RC: 16"
+		zospmlog "configure RC: 16"
                 return 16               
 	fi
 	
-	archive="${ZBREW_TMP}/${ussname}.dzp"	
+	archive="${ZOSPM_TMP}/${ussname}.dzp"	
 	if ! [ -f "${archive}" ]; then
 		echo "Unable to find product installation archive: ${archive}" >&2
-		zbrewlog "configure RC: 16"
+		zospmlog "configure RC: 16"
                 return 16               
 	fi
-	zbrewrestore "${ussname}" 
+	zospmrestore "${ussname}" 
 	rc=$?
 	if  [ $rc -gt 0 ]; then
 		echo "Unable to restore product installation archive: ${archive}" >&2
-		zbrewlog "configure RC: $rc"
+		zospmlog "configure RC: $rc"
                 return $rc               
 	fi
 	
 	${prodconfig} ${opts}
 	rc=$?
-	zbrewlog "configure RC: $rc"
+	zospmlog "configure RC: $rc"
 	return $rc
 }
 
 deconfigure() {
-	zbrewlog "deconfigure" $*
+	zospmlog "deconfigure" $*
 
         ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
         zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
@@ -518,29 +518,29 @@ deconfigure() {
 	        echo "deconfigure ${opts} ${sw}" >&2
 	fi
 
-	proddeconfig="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}deconfig"
+	proddeconfig="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}deconfig"
         if [ -f "${proddeconfig}" ]; then
      	        ${proddeconfig} ${opts}
 		rc=$?
 		if [ $rc -gt 0 ]; then
-			zbrewlog "deconfigure RC: $?"
+			zospmlog "deconfigure RC: $?"
 			return $rc
 	 	fi
 	else 
 		echo "Error: unable to find ${proddeconfig} to deconfigure ${ussname}. Deconfigure failed." >&2
-		zbrewlog "deconfigure RC: 8"
+		zospmlog "deconfigure RC: 8"
 		return 8
 	fi
-	if [ "${ZBREW_TGT_HLQ}" != "${ZBREW_TGT_HLQ%.*}" ]; then
-		zbrewmount -u -t $sw
-		drm -f "${ZBREW_TGT_HLQ}${zosname}*.**"
+	if [ "${ZOSPM_TGT_HLQ}" != "${ZOSPM_TGT_HLQ%.*}" ]; then
+		zospmmount -u -t $sw
+		drm -f "${ZOSPM_TGT_HLQ}${zosname}*.**"
 	fi
-	zbrewlog "deconfigure RC: $?"
+	zospmlog "deconfigure RC: $?"
 	return $?
 }
 
-install_verbs="prodreq smpconfig receive smpcrdddef proddsalloc smpapplycheck smpapply smpacceptcheck smpaccept zbrewarchive"
-update_verbs="smpapplycheck smpapply zbrewarchive"
+install_verbs="prodreq smpconfig receive smpcrdddef proddsalloc smpapplycheck smpapply smpacceptcheck smpaccept zospmarchive"
+update_verbs="smpapplycheck smpapply zospmarchive"
 
 debug=0
 verbose=0
@@ -569,14 +569,14 @@ while getopts ":cvdqfr:w:" opt; do
         fi
       done
       if [ "${rescheck}" = 'notok' ]; then
-      	msg zbrew ${InvalidOption} E "${OPTARG}"
+      	msg zospm ${InvalidOption} E "${OPTARG}"
 	exit 4
       fi
       ;;
     w )
       workdir=${OPTARG}
       if ! [ -d "${workdir}" ]; then
-      	msg zbrew ${InvalidWorkDir} E "${OPTARG}"
+      	msg zospm ${InvalidWorkDir} E "${OPTARG}"
 	exit 8
       fi
       ;;
@@ -593,7 +593,7 @@ while getopts ":cvdqfr:w:" opt; do
       ;;
     \?)
       if [ ${OPTARG} != "?" ]; then
-	msg zbrew ${InvalidOption} E "${OPTARG}"
+	msg zospm ${InvalidOption} E "${OPTARG}"
       fi
       syntax
       exit 8
@@ -602,25 +602,25 @@ while getopts ":cvdqfr:w:" opt; do
 done
 shift $(expr $OPTIND - 1 )
 if [ $# -lt 2 ]; then
-	msg zbrew ${TooFewParms} E "$#"
+	msg zospm ${TooFewParms} E "$#"
 	syntax
 	exit 16
 fi
 
 if [ "${workdir}" = '' ]; then
-	workdir="${ZBREW_WORKROOT}"
+	workdir="${ZOSPM_WORKROOT}"
 fi
 if [ "${workdir}" = '' ]; then
-	msg zbrew ${WorkDirRequired} E 
+	msg zospm ${WorkDirRequired} E 
 	exit 8
 fi
 if ! [ -d "${workdir}" ]; then
-	msg zbrew ${InvalidWorkDir} E "${OPTARG}"
+	msg zospm ${InvalidWorkDir} E "${OPTARG}"
 	exit 4
 fi
 
-export ZBREW_WORKROOT="${workdir}"
-. zbrewsetenv
+export ZOSPM_WORKROOT="${workdir}"
+. zospmsetenv
 
 sw=$2
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
@@ -630,28 +630,28 @@ zosfile=$(echo ${3} | tr '[:lower:]' '[:upper:]');
 # Check the version of zoautils is recent enough
 zoaversion=`zoaversion`
 if [ $? -gt 0 ]; then
-	echo "Z Open Automation Utilities (ZOAU) is not in your PATH. ZOAU is required to use zbrew." >&2
+	echo "Z Open Automation Utilities (ZOAU) is not in your PATH. ZOAU is required to use zospm." >&2
 	exit 16
 fi
 year=${zoaversion%%/*}
 yearmonth=${zoaversion%/*}
 month=${yearmonth##*/}
 if [ $year -lt 2020 ] || [ $month -lt 3 ]; then
-	echo "Z Open Automation Utilities 2020/03/01 or later is required to run zbrew. Your utilities are too old: ${zoaversion}" >&2
+	echo "Z Open Automation Utilities 2020/03/01 or later is required to run zospm. Your utilities are too old: ${zoaversion}" >&2
 	exit 16
 fi
-if [ "${ZBREW_REPOROOT}" = '' ]; then
-	msg zbrew ${RepoDirRequired} E 
+if [ "${ZOSPM_REPOROOT}" = '' ]; then
+	msg zospm ${RepoDirRequired} E 
 	exit 8
 fi
-if ! [ -d "${ZBREW_REPOROOT}" ]; then
-	msg zbrew ${InvalidRepoDir} E "${ZBREW_REPOROOT}"
+if ! [ -d "${ZOSPM_REPOROOT}" ]; then
+	msg zospm ${InvalidRepoDir} E "${ZOSPM_REPOROOT}"
 	exit 4
 fi
 
 if [ "${clean}" = "1" ]; then
 	prefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
-	bomfile="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}bom.json"
+	bomfile="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}bom.json"
 	swparent=`readparent ${ussname} <${bomfile}`
 	rc=$?
 	if [ $rc -gt 0 ]; then
@@ -668,14 +668,14 @@ if [ "${clean}" = "1" ]; then
         	echo "If you need to RE-install $zosname, then manual actions may be required for $swparent" >&2
         	echo "to clean up SMP/E or alternatively you will need to first uninstall and reinstall $swparent" >&2
         	echo " " >&2
-        	echo "If you really wish to uninstal $zosname then run zbrew uninstall $zosname" >&2
+        	echo "If you really wish to uninstal $zosname then run zospm uninstall $zosname" >&2
 		exit 16
 	fi
 
 	out=`prodclean ${opts} ${sw}`
 	
 	rc=$?
-	zbrewlog "Cleanup for ${sw} Return Code: ${rc}"
+	zospmlog "Cleanup for ${sw} Return Code: ${rc}"
 	if [ "${verbose}" = "1" ]; then
 		echo "Cleanup completed: ${rc}" >&2
 	fi
@@ -796,7 +796,7 @@ case ${verb} in
                 fi
                 ;;
         archive )
-                out=`zbrewarchive ${sw}`;
+                out=`zospmarchive ${sw}`;
                 rc=$?
                 if [ $rc -gt 0 ] || [ $verbose -gt 0 ]; then
                         echo "${out}" >&2
@@ -830,7 +830,7 @@ case ${verb} in
 	uninstall ) 
 		out=`prodclean ${opts} ${sw}`
 		rc=$?
-		zbrewlog "Uninstall ${sw} Return Code: ${rc}"
+		zospmlog "Uninstall ${sw} Return Code: ${rc}"
 		if [ "${verbose}" = "1" ]; then
 			echo "Uninstall completed: ${rc}" >&2
 		fi
@@ -839,7 +839,7 @@ case ${verb} in
                 fi
 		
 		;;	
-	* ) msg zbrew ${UnknownAction} E ${verb}; exit 16;;
+	* ) msg zospm ${UnknownAction} E ${verb}; exit 16;;
 esac
 
 exit $rc

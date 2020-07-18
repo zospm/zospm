@@ -1,9 +1,9 @@
 #
-# gets called by zbrewexternalfuncs
+# gets called by zospmexternalfuncs
 #
 
 supportsCICS() {
-	return `definedProperty "$ZBREW_DFHHLQ"`
+	return `definedProperty "$ZOSPM_DFHHLQ"`
 }
 
 cicsSYSINUpdate() {

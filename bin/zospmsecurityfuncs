@@ -1,5 +1,5 @@
 #
-# gets called by zbrewexternalfuncs
+# gets called by zospmexternalfuncs
 #
 
 racfGroupExists() {
@@ -83,12 +83,12 @@ racfRefreshClasses() {
 
 racfSubjectsDN() {
 	commonName="$1"
-	tv="${ZBREW_X509DN_T}"	
-	ouv="${ZBREW_X509DN_OU}"	
-	ov="${ZBREW_X509DN_O}"	
-	lv="${ZBREW_X509DN_L}"	
-	spv="${ZBREW_X509DN_SP}"	
-	cv="${ZBREW_X509DN_C}"	
+	tv="${ZOSPM_X509DN_T}"	
+	ouv="${ZOSPM_X509DN_OU}"	
+	ov="${ZOSPM_X509DN_O}"	
+	lv="${ZOSPM_X509DN_L}"	
+	spv="${ZOSPM_X509DN_SP}"	
+	cv="${ZOSPM_X509DN_C}"	
 
 	subjectsDN="SUBJECTSDN(CN('${commonName}')"
 	if `definedProperty "${tv}"`; then

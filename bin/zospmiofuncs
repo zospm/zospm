@@ -1,10 +1,10 @@
 #
-# gets called by zbrewexternalfuncs
+# gets called by zospmexternalfuncs
 #
 
 a2e() {
 	file="$1"
-	tmpfile="${ZBREW_TMP}/ascii.$$"
+	tmpfile="${ZOSPM_TMP}/ascii.$$"
 	iconv -t IBM-1047 -f ISO8859-1 <"${file}" >"${tmpfile}"
 	if [ $? -gt 0 ]; then
 		return $?
@@ -20,7 +20,7 @@ a2e() {
 
 e2a() {
 	file="$1"
-	tmpfile="${ZBREW_TMP}/ascii.$$"
+	tmpfile="${ZOSPM_TMP}/ascii.$$"
 	iconv -f IBM-1047 -t ISO8859-1 <"${file}" >"${tmpfile}"
 	if [ $? -gt 0 ]; then
 		return $?

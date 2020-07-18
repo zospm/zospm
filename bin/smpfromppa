@@ -20,7 +20,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -31,16 +31,16 @@ syntax() {
 smpfromppa [-vd] <prefix>
 	    
 Examples:
-	smpfromppa igy630 <-- Copy SMP/E pax files to \$ZBREW_TMP and then run smpfromnts
+	smpfromppa igy630 <-- Copy SMP/E pax files to \$ZOSPM_TMP and then run smpfromnts
 " >&2 
 	exit 16
 }
 
 unpaxfromlocal() {
 	sw="$1"
-	paxout="${ZBREW_TMP}/$$.${sw}_pax.out"
+	paxout="${ZOSPM_TMP}/$$.${sw}_pax.out"
 
-	NTS="${ZBREW_TMP}/smpnts.${sw}/ppaorder"
+	NTS="${ZOSPM_TMP}/smpnts.${sw}/ppaorder"
 	mkdir -p ${NTS}
 	rc=$?
 	if [ ${rc} -gt 0 ]; then
@@ -48,7 +48,7 @@ unpaxfromlocal() {
 		return ${rc}
 	fi	
 	cd "${NTS}"
-	pax -rf "${ZBREW_WORKROOT}/pkg/${sw}.pax.Z" >${paxout} 2>&1
+	pax -rf "${ZOSPM_WORKROOT}/pkg/${sw}.pax.Z" >${paxout} 2>&1
 	rc=$?
 	cd "${OLDPWD}"
 	if [ ${rc} -gt 0 ]; then
@@ -62,7 +62,7 @@ unpaxfromlocal() {
 	return ${rc} 
 }
 
-. zbrewsetenv
+. zospmsetenv
 
 debug=0
 verbose=0
@@ -97,8 +97,8 @@ fi
 mydir=$(callerdir ${0})
 ussname=$(echo ${1} | tr '[:upper:]' '[:lower:]'); 
 zosname=$(echo ${1} | tr '[:lower:]' '[:upper:]'); 
-props="${ZBREW_WORKROOT}/order/${ussname}order.json"
-zbrewpropse "${ussname}" order "${props}"
+props="${ZOSPM_WORKROOT}/order/${ussname}order.json"
+zospmpropse "${ussname}" order "${props}"
 
 out=`unpaxfromlocal ${zosname}`
 rc=$? 

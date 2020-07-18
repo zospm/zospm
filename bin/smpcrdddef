@@ -24,7 +24,7 @@ msg() {
                 ${PrefixTooLong}) msgtext="Prefix must be 6 characters or less. Received: ";;
                 *) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
         esac
-        echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+        echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 
@@ -41,7 +41,7 @@ targdddefs=`echo "${libs}" | awk '($2 != "ZFS" && $7 == "T") {print $1}'`
 for targdddef in ${targdddefs}; do
  smpuclin="${smpuclin}
  REP DDDEF(${targdddef})
- DA(${ZBREW_SRC_HLQ}${child_zosname}.${targdddef})
+ DA(${ZOSPM_SRC_HLQ}${child_zosname}.${targdddef})
  UNIT(SYSALLDA)
  WAITFORDSN
  SHR.
@@ -55,7 +55,7 @@ for targddzfs in ${targdddefs}; do
  dddefpath=`echo "${targddzfs}" | awk -F, '{print $2}'`
  smpuclin="${smpuclin}
  REP DDDEF(${targdddef})
- PATH('${ZBREW_SRC_ZFSROOT}${dddefpath}').
+ PATH('${ZOSPM_SRC_ZFSROOT}${dddefpath}').
 "
 done
 
@@ -81,7 +81,7 @@ distdddefs=`echo "${libs}" | awk '($7 == "D") {print $1}'`
 for distdddef in ${distdddefs};do
  smpuclin="${smpuclin}
  REP DDDEF(${distdddef})
- DA(${ZBREW_SRC_HLQ}${child_zosname}.${distdddef})
+ DA(${ZOSPM_SRC_HLQ}${child_zosname}.${distdddef})
  UNIT(SYSALLDA)
  WAITFORDSN
  SHR.
@@ -93,7 +93,7 @@ done
 
 run_gimsmp(){
 
-smpout=`smp -i "${ZBREW_SRC_HLQ}${zosname}G.GLOBAL.CSI" <<zzz
+smpout=`smp -i "${ZOSPM_SRC_HLQ}${zosname}G.GLOBAL.CSI" <<zzz
 ${smpuclin}
 zzz
 `
@@ -135,7 +135,7 @@ if [ $# -lt 1 ]; then
         exit 16
 fi
 
-. zbrewsetenv
+. zospmsetenv
 
 sw=$1
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
@@ -143,7 +143,7 @@ child_zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 prefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
 
-smpelibs="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}bom.json"
+smpelibs="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}bom.json"
 swparent=`readparent ${ussname} <${smpelibs}`
 rc=$?
 if [ $rc -gt 0 ]; then

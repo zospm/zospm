@@ -1,5 +1,5 @@
 #
-# gets called by zbrewexternalfuncs
+# gets called by zospmexternalfuncs
 #
 
 jclRemoveAddOrReplaceDD() {

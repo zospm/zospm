@@ -1,10 +1,10 @@
 #
-# zbrewsetenv: set up environment for configuration scripts
-# IMPORTANT NOTE: zbrewsetenv needs to be SOURCED rather than just run, e.g. 
+# zospmsetenv: set up environment for configuration scripts
+# IMPORTANT NOTE: zospmsetenv needs to be SOURCED rather than just run, e.g. 
 # Run the script as:
-#   . zbrewsetenv
+#   . zospmsetenv
 # as opposed to:
-#   zbrewsetenv
+#   zospmsetenv
 #
 #set -x
 `whence sh >/dev/null 2>&1`
@@ -34,28 +34,28 @@ else
 	}
 fi
 
-zbrewdir=`abspath zbrew`
+zospmdir=`abspath zospm`
 if [ $? -gt 0 ]; then
-	echo "zbrewsetenv: zbrew needs to be in your PATH before setting up your environment" >&2
+	echo "zospmsetenv: zospm needs to be in your PATH before setting up your environment" >&2
 	return 4
 fi
-zbrewroot="${zbrewdir%/*}"
+zospmroot="${zospmdir%/*}"
 
-. zbrewinternalfuncs
-. zbrewexternalfuncs
+. zospminternalfuncs
+. zospmexternalfuncs
 
 export mydir=$(callerdir ${0})
 
-if ! [ -d "${ZBREW_WORKROOT}" ]; then
-	echo "zbrewsetenv: ZBREW_WORKROOT must point to the zbrew work root directory" >&2
+if ! [ -d "${ZOSPM_WORKROOT}" ]; then
+	echo "zospmsetenv: ZOSPM_WORKROOT must point to the zospm work root directory" >&2
 	return 4
 fi
 
-props="${ZBREW_WORKROOT}/props/zbrewglobalprops.json"
-zbrewpropse zbr100 "props" "${props}"
+props="${ZOSPM_WORKROOT}/props/zospmglobalprops.json"
+zospmpropse zbr100 "props" "${props}"
 
-export ZBREW_ROOT=${zbrewroot}
-if `undefinedProperty "${ZBREW_REPOROOT}"` ; then
-	reporoot="${zbrewroot%/*}"
-	ZBREW_REPOROOT="${reporoot}"
+export ZOSPM_ROOT=${zospmroot}
+if `undefinedProperty "${ZOSPM_REPOROOT}"` ; then
+	reporoot="${zospmroot%/*}"
+	ZOSPM_REPOROOT="${reporoot}"
 fi

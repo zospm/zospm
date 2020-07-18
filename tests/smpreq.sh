@@ -2,11 +2,11 @@
 #
 # Basic test to ensure requisite checking works
 #
-. zbrewsetenv
+. zospmsetenv
 
 # First, make sure the zhw repo has been installed
 
-ZHW110DIR="${ZBREW_REPOROOT}/zbrew-zhw/zhw110/"
+ZHW110DIR="${ZOSPM_REPOROOT}/zospm-zhw/zhw110/"
 if ! [ -e "${ZHW110DIR}" ]; then
 	echo "Need to install zhw repo to run this test" >&2
 	exit 1
@@ -18,6 +18,6 @@ PREREQ CEE ZOS240 HLE77C0 HLE77C0
 COREQ DFH DFH520 HCI6900 UI22206 UI30410
 COREQ ASM ASM160 HMQ4160 UK47103 UK59311"
 
-zbrewtest "Requisites for ZHW110 not as expected" "${expected}" "${actual}"
+zospmtest "Requisites for ZHW110 not as expected" "${expected}" "${actual}"
 
 exit 0

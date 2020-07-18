@@ -20,7 +20,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -41,9 +41,9 @@ receivefromnetwork() {
 
 	setjavaenv
 
-	tmpServerHFS=${ZBREW_TMP}/$$.server.xml
-	tmpClientHFS=${ZBREW_TMP}/$$.client.xml
-	tmpCntlHFS=${ZBREW_TMP}/$$.cntl.xml
+	tmpServerHFS=${ZOSPM_TMP}/$$.server.xml
+	tmpClientHFS=${ZOSPM_TMP}/$$.client.xml
+	tmpCntlHFS=${ZOSPM_TMP}/$$.cntl.xml
 
 	cat >${tmpClientHFS} <<zzz
   <CLIENT debug="YES"                                  
@@ -79,11 +79,11 @@ zzz
       .
 zzz
 
-	NTS=${ZBREW_TMP}/smpnts.${sw}
+	NTS=${ZOSPM_TMP}/smpnts.${sw}
 
 	mkdir -p ${NTS}
 
-	smpout=`smp -i ${ZBREW_SRC_HLQ}${sw}G.GLOBAL.CSI -w ${ZBREW_TMP} -n ${NTS} -c ${tmpClientHFS} -s ${tmpServerHFS} <${tmpCntlHFS}`
+	smpout=`smp -i ${ZOSPM_SRC_HLQ}${sw}G.GLOBAL.CSI -w ${ZOSPM_TMP} -n ${NTS} -c ${tmpClientHFS} -s ${tmpServerHFS} <${tmpCntlHFS}`
 	rc=$?
 	if [ ${rc} -gt 0 ]; then
 		echo "SMP/E RECEIVE of ${sw} failed." >&2
@@ -97,7 +97,7 @@ zzz
 	return ${rc} 
 }
 
-. zbrewsetenv
+. zospmsetenv
 
 debug=0
 verbose=0
@@ -132,8 +132,8 @@ fi
 mydir=$(callerdir ${0})
 ussname=$(echo ${1} | tr '[:upper:]' '[:lower:]'); 
 zosname=$(echo ${1} | tr '[:lower:]' '[:upper:]'); 
-props="${ZBREW_WORKROOT}/order/${ussname}order.json"
-zbrewpropse "${ussname}" order "${props}"
+props="${ZOSPM_WORKROOT}/order/${ussname}order.json"
+zospmpropse "${ussname}" order "${props}"
 
 out=`receivefromnetwork ${zosname}`; 
 rc=$? 

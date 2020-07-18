@@ -9,12 +9,12 @@
 # -Verify that running hello-world program now fails because it can't find the module
 #
 
-. zbrewsetenv
+. zospmsetenv
 
 #set -x
 TMPLOAD=`mvstmp`
 base="parmlib$$"
-tmpsrc="${ZBREW_TMP}/${base}.c"
+tmpsrc="${ZOSPM_TMP}/${base}.c"
 tmpo="${base}.o"
 drm -f ${TMPLOAD}
 rm -f ${tmpsrc} ${tmpo}
@@ -22,23 +22,23 @@ rm -f ${tmpsrc} ${tmpo}
 dtouch -ru "${TMPLOAD}"
 
 echo 'int main() { puts("Hello world"); return(0); }' >${tmpsrc}
-(export STEPLIB="${ZBREW_CBCHLQ}.SCCNCMP:$STEPLIB"; c89 -o"//'${TMPLOAD}(zhw)'" ${tmpsrc})
-zbrewtest "Unable to compile hello-world" "0" "$?"
+(export STEPLIB="${ZOSPM_CBCHLQ}.SCCNCMP:$STEPLIB"; c89 -o"//'${TMPLOAD}(zhw)'" ${tmpsrc})
+zospmtest "Unable to compile hello-world" "0" "$?"
 rm "${tmpsrc}" "${tmpo}"
 
 llaAddDatasets "${TMPLOAD}"
-zbrewtest "Unable to load ${TMPLOAD} into LLA" "0" "$?"
+zospmtest "Unable to load ${TMPLOAD} into LLA" "0" "$?"
 
 sh -c "(export PATH=$PATH; mvscmd --pgm=ZHW --sysprint=*)" | grep -q 'Hello world'
-zbrewtest "Unable to run hello-world" "0" "$?"
+zospmtest "Unable to run hello-world" "0" "$?"
 
 llaRemoveDatasets "${TMPLOAD}"
-zbrewtest "Unable to remove ${TMPLOAD} from LLA" "0" "$?"
+zospmtest "Unable to remove ${TMPLOAD} from LLA" "0" "$?"
 
 sh -c "(export PATH=$PATH; mvscmd --pgm=ZHW --sysprint=dummy 2>/dev/null)"
-zbrewtest "Was able to find hello-world" "15" "$?"
+zospmtest "Was able to find hello-world" "15" "$?"
 
 drm ${TMPLOAD}
-zbrewtest "Unable to delete load module" "0" "$?"
+zospmtest "Unable to delete load module" "0" "$?"
 
 exit 0

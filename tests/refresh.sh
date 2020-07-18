@@ -1,51 +1,51 @@
 #!/bin/sh
 #
-# Basic test to ensure zbrew refresh of packages works
+# Basic test to ensure zospm refresh of packages works
 #
-. zbrewsetenv
+. zospmsetenv
 #set -x
 
-# Change ZBREW_REPOROOT to point to a test directory so as not to affect the 'real' repos
-export ZBREW_REPOROOT="${ZBREW_TMP}/refreshtest"
-rm -rf "$ZBREW_REPOROOT"
-mkdir -p "$ZBREW_REPOROOT"
+# Change ZOSPM_REPOROOT to point to a test directory so as not to affect the 'real' repos
+export ZOSPM_REPOROOT="${ZOSPM_TMP}/refreshtest"
+rm -rf "$ZOSPM_REPOROOT"
+mkdir -p "$ZOSPM_REPOROOT"
 
-# First, refresh with no 'repo' directory. This should create a src repo because zbrew is source based
+# First, refresh with no 'repo' directory. This should create a src repo because zospm is source based
 
-zbrew refresh zhw
+zospm refresh zhw
 rc=$?
-zbrewtest "Failed to refresh zhw (src create)" "0" "$rc"
+zospmtest "Failed to refresh zhw (src create)" "0" "$rc"
 
-# Verify that the zbrew-zhw directory exists and that it has a .git directory inside it
-zbrewtest "Did not find zbrew-zhw after refresh" "zbrew-zhw" `ls $ZBREW_REPOROOT`
-zbrewtest "Did not find .git after refresh" "$ZBREW_REPOROOT/zbrew-zhw/.git" `ls -ad $ZBREW_REPOROOT/zbrew-zhw/.git`
+# Verify that the zospm-zhw directory exists and that it has a .git directory inside it
+zospmtest "Did not find zospm-zhw after refresh" "zospm-zhw" `ls $ZOSPM_REPOROOT`
+zospmtest "Did not find .git after refresh" "$ZOSPM_REPOROOT/zospm-zhw/.git" `ls -ad $ZOSPM_REPOROOT/zospm-zhw/.git`
 
 # Next, refresh again. This should update the src repo because the src code is already there
-out=`zbrew refresh zhw`
+out=`zospm refresh zhw`
 rc=$?
-zbrewtest "Failed to refresh zhw (src update)" "0" "$rc"
+zospmtest "Failed to refresh zhw (src update)" "0" "$rc"
 
 echo "$out" | grep -q "Already up-to-date."
 rc=$?
 
 # Check the output and ensure it did a 'pull' and that no updates were found
-zbrewtest "zbrew refresh (src update) failed. Full output: ${out}" "0" "$rc"
+zospmtest "zospm refresh (src update) failed. Full output: ${out}" "0" "$rc"
 
 # Finally, 'pretend' to already have a binary repo by just creating the root directory, create a README.md file and ensure it pulls from bintray
 
-rm -rf "$ZBREW_REPOROOT/zbrew-zhw"
-mkdir -p "$ZBREW_REPOROOT/zbrew-zhw"
-touch "$ZBREW_REPOROOT/zbrew-zhw/README.md"
-zbrew refresh zhw 
+rm -rf "$ZOSPM_REPOROOT/zospm-zhw"
+mkdir -p "$ZOSPM_REPOROOT/zospm-zhw"
+touch "$ZOSPM_REPOROOT/zospm-zhw/README.md"
+zospm refresh zhw 
 rc=$?
-zbrewtest "Failed to refresh zhw (bin create)" "0" "$rc"
+zospmtest "Failed to refresh zhw (bin create)" "0" "$rc"
 
-# Verify that the zbrew-zhw directory exists and that it DOES NOT have a .git directory inside it
-zbrewtest "Did not find zbrew-zhw after refresh" "zbrew-zhw" `ls $ZBREW_REPOROOT`
+# Verify that the zospm-zhw directory exists and that it DOES NOT have a .git directory inside it
+zospmtest "Did not find zospm-zhw after refresh" "zospm-zhw" `ls $ZOSPM_REPOROOT`
 
-ls "$ZBREW_REPOROOT/zbrew-zhw/.git" >/dev/null 2>/dev/null
+ls "$ZOSPM_REPOROOT/zospm-zhw/.git" >/dev/null 2>/dev/null
 rc=$?
-zbrewtest "Found .git after binary refresh" "1" "$rc"
+zospmtest "Found .git after binary refresh" "1" "$rc"
 
-rm -rf "$ZBREW_REPOROOT"
+rm -rf "$ZOSPM_REPOROOT"
 exit 0

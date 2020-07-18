@@ -1,10 +1,10 @@
 #
-# gets called by zbrewexternalfuncs
+# gets called by zospmexternalfuncs
 #
 
 issueTSO() {
 	cmd=$1
-	tmpout="${ZBREW_TMP}/$$tso.out"
+	tmpout="${ZOSPM_TMP}/$$tso.out"
 	tsocmd "${cmd}" >$tmpout 2>/dev/null
 	rc=$?
 	if [ $rc -gt 0 ]; then
@@ -108,7 +108,7 @@ parmlibAddDataset() {
 }
 
 curllname() {
-	opout="${ZBREW_TMP}/curllname.$$.out"
+	opout="${ZOSPM_TMP}/curllname.$$.out"
 	llaresults=`opercmd 'D LLA' 2>${opout}`
 	llaerr=`cat "${opout}"`
 	rm -f "${opout}"
@@ -181,14 +181,14 @@ llaAddOrRemoveDatasets() {
 
 	curllname=`curllname`
 	while true ; do
-		nextllname=`nextllname "${curllname}" "ZBREW"`
+		nextllname=`nextllname "${curllname}" "ZOSPM"`
 		if `llnameUndefined "${nextllname}"` ; then	
 			break;
 		fi
 		curllname="${nextllname}"
 	done
 
-	opout="${ZBREW_TMP}/llaAddRemoveDatasets.$$.out"
+	opout="${ZOSPM_TMP}/llaAddRemoveDatasets.$$.out"
 	rm -f "${opout}"
 
 	opercmd "SETPROG LNKLST DEFINE NAME(${nextllname}) COPYFROM(CURRENT)" >>${opout} 2>&1

@@ -121,7 +121,7 @@ while getopts ":r:f:l:p:i:w:n:c:s:vd" opt; do
       ;;
     \?) 	
       if [ ${OPTARG} != "?" ]; then
-        msg zbrew ${InvalidOption} E "${OPTARG}"
+        msg zospm ${InvalidOption} E "${OPTARG}"
       fi
       syntax
       exit 4

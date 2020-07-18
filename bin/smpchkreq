@@ -21,7 +21,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -32,8 +32,8 @@ syntax() {
 smpchkreq [-vd] <swname> <reqjson>
 	    
 Examples:
-	Check that the requirements defined for EQAE20 are satisfied from \$ZBREW_ROOT/../zbrew-eqa/eqae20/eqae20req.json
-	smpchkreq eqae20 \$ZBREW_ROOT/../zbrew-eqa/eqae20/eqae20req.json
+	Check that the requirements defined for EQAE20 are satisfied from \$ZOSPM_ROOT/../zospm-eqa/eqae20/eqae20req.json
+	smpchkreq eqae20 \$ZOSPM_ROOT/../zospm-eqa/eqae20/eqae20req.json
 " >&2 
 	exit 16
 }
@@ -50,9 +50,9 @@ chkreq() {
 	shift 4
 	ptfs="$*"
 	if [ "${swparent}" != "0" ]; then
-		csi="${ZBREW_SRC_HLQ}${swparent}G.GLOBAL.CSI"
+		csi="${ZOSPM_SRC_HLQ}${swparent}G.GLOBAL.CSI"
 	else
-		csienv="\$ZBREW_${relid}_CSI"
+		csienv="\$ZOSPM_${relid}_CSI"
 		csi=`eval echo ${csienv}`
 	fi
 	if [ "${csi}" = 'NONE' ]; then
@@ -189,7 +189,7 @@ if [ $# -lt 2 ]; then
 	exit 16
 fi
 
-. zbrewsetenv
+. zospmsetenv
 
 sw="$(echo $1 | tr '[:lower:]' '[:upper:]')"
 
@@ -197,7 +197,7 @@ ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
 zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 prefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
 
-bomfile="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}bom.json"
+bomfile="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}bom.json"
 
 swparent=`readparent ${ussname} <${bomfile}`
 rc=$?
@@ -206,7 +206,7 @@ if [ $rc -gt 0 ]; then
 fi
 
 if [ "${swparent}" != "0" ]; then
-	csi="${ZBREW_SRC_HLQ}${swparent}G.GLOBAL.CSI"
+	csi="${ZOSPM_SRC_HLQ}${swparent}G.GLOBAL.CSI"
         chkcsi=`tso "listc ent('${csi}')"` 2>/dev/null
         rc=$?
         if [ "${rc}" != "0" ]; then
