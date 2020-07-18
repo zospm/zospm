@@ -275,7 +275,7 @@ else
 fi
 
 rm "${myself}"
-exit 0
+exit $rc 
 zz
 	rc=$?
 	if [ $rc -gt 0 ]; then
