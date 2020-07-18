@@ -366,7 +366,7 @@ prodreq() {
 		if [ "${rc}" != "0" ]; then
 			echo "Warning, ${ZOSPM_TMP} is low on free space, it is recommended to have at least ${ZOSPM_TMP_MINSPACE} KB available" >&2
 			echo "Current free space available is: ${tmp_frspace} KB" >&2
-		        echo "zBrew Failed to automatically extend zfs ${zfstmpnm} to new size: ${newsize}. Return code: ${rc}" >&2
+		        echo "zospm Failed to automatically extend zfs ${zfstmpnm} to new size: ${newsize}. Return code: ${rc}" >&2
 			rc=16		
 		fi
 		return ${rc}

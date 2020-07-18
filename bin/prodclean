@@ -92,7 +92,7 @@ if [ "$swchild" != "0" ] && [ "$swchild" != "" ]; then
 	echo " " >&2
         echo "Warning: Product $zosname is in a child/parent relationshiop and has other products installed in it's SMP/E zone" >&2
         echo "By running uninstall or using the -c option for $zosname, means the below listed products are also affected." >&2
-        echo "Zbrew will automatically uninstall all the below listed products as a result." >&2
+        echo "zospm will automatically uninstall all the below listed products as a result." >&2
         echo "If desired you will need to reinstall these products after re-installing $zosname." >&2
 	echo " " >&2
 	echo "The following Product(s) are affected and will be uninstalled if required: ">&2
