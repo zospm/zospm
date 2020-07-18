@@ -1,6 +1,6 @@
 {
  	"software": [{
-		"relid":"ZBR100",
+		"relid":"ZPM100",
 		"props":{
 			"ZOSPM_GITSERVER":"git@github.com:zospm",
 			"ZOSPM_BINSERVER":"https://dl.bintray.com/zospm",

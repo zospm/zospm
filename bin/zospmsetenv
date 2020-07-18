@@ -52,7 +52,7 @@ if ! [ -d "${ZOSPM_WORKROOT}" ]; then
 fi
 
 props="${ZOSPM_WORKROOT}/props/zospmglobalprops.json"
-zospmpropse zbr100 "props" "${props}"
+zospmpropse zpm100 "props" "${props}"
 
 export ZOSPM_ROOT=${zospmroot}
 if `undefinedProperty "${ZOSPM_REPOROOT}"` ; then
