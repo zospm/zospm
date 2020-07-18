@@ -8,7 +8,7 @@ especially with respect to naming conventions for the software.
 
 1. Automation is paramount. The only way to achieve drastic time reduction is through automation
 2. Since our philosophy is to work with an automated, prescriptive approach, zospm must define it's own set of 
-_Best Practices for z/OS Automated Software Installation_ and Configuration to achieve #1  
+_Best Practices for z/OS Automated Software Installation_ and Configuration to achieve #1  
 3. _zospm_ will not be useful with an all-or-nothing approach. _zospm_ needs to interact with traditional 
 software installation and configuration
 4. _zospm_ needs feedback to ensure these _Best Practices_ can be applied to real-world shops
