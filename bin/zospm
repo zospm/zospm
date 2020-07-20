@@ -139,17 +139,20 @@ latestBinary() {
 	httpsget -o "${tmpa}" "${binserver}/zospm"
 	rc=$?
 	if [ $rc -gt 0 ]; then
+		echo "There are no packages at: ${binserver}/zospm" >&2
 		return $rc
 	fi
 	chtag -tc ISO8859-1 "${tmpa}"
 	rc=$?
 	if [ $rc -gt 0 ]; then
+		echo "Unable to tag ${binserver}/zospm package list at ${tmpa} as ISO8859-1" >&2
 		return $rc
 	fi
 	line=`cat ${tmpa} | awk '/href=/ { print $3 }' | grep "${binname}" | tail -1`
 	rc=$?
 	rm "${tmpa}"
 	if [ $rc -gt 0 ]; then
+		echo "Unable to find any packages of name ${binname} from ${binserver}/zospm" >&2
 		return $rc
 	fi
 	file="${line#*${binname}_*}"

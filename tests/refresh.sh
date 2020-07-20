@@ -36,8 +36,21 @@ zospmtest "zospm refresh (src update) failed. Full output: ${out}" "0" "$rc"
 rm -rf "$ZOSPM_REPOROOT/zospm-zhw"
 mkdir -p "$ZOSPM_REPOROOT/zospm-zhw"
 touch "$ZOSPM_REPOROOT/zospm-zhw/README.md"
-zospm refresh zhw 
+error=`zospm refresh zhw 2>&1`
 rc=$?
+if [ $rc -eq 16 ]; then
+	echo "${error}" | grep "There are no packages"
+	if [ $? -eq 0 ]; then
+		# Early exit - no binaries yet at the server 
+		exit 0
+	fi
+	echo "${error}" | grep "Unable to find any packages of name zhw"
+	if [ $? -eq 0 ]; then
+		# Early exit - no binaries for zhw yet at the server 
+		exit 0
+	fi
+fi
+	
 zospmtest "Failed to refresh zhw (bin create)" "0" "$rc"
 
 # Verify that the zospm-zhw directory exists and that it DOES NOT have a .git directory inside it
