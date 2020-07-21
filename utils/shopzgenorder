@@ -17,7 +17,7 @@ rawdata=`awk -vheader="${header}" -vfooter="${footer}" '$0 ~ "^"header { scan=1;
 
 echo '{'
 echo '	"software": [{'
-echo "		\"name\":\"${swname}\","
+echo "		\"relid\":\"${swname}\","
 echo '		"order":{'
 echo '			"SMPE_DELIVERY":"SHOPZ",'
 echo "${rawdata}" | while read; do
