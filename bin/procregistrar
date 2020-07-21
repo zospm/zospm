@@ -23,7 +23,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -39,7 +39,7 @@ Examples:
 	Disable EQAE20 proc DBGMGR
         	procregistrar eqae20 disable dbgmgr
 Note:
-	The PDS \${ZBREW_ROOT}PROCLIB is created if it does not already exist
+	The PDS \${ZOSPM_ROOT}PROCLIB is created if it does not already exist
 	The PDS member will have the new PROC written with a header/trailer comment
 	The PDS member will have the PROC removed if it is disabled
 	Enabling a member that already has an entry is an error.
@@ -85,16 +85,16 @@ sfx="*"
 header="${pfx} --- ${sw} start --- ${sfx}"
 footer="${pfx} --- ${sw} end   --- ${sfx}"
 
-. zbrewsetenv
+. zospmsetenv
 
-procds="${ZBREW_TGT_HLQ}PROCLIB"
+procds="${ZOSPM_TGT_HLQ}PROCLIB"
 activeprocnum=`opercmd '$djobclass(stc),proclib' 2>/dev/null | grep HASP837 | awk -F'=' '{ print $2  }'`
 if [ $? -gt 0 ]; then
 	echo "Unable to determine started task class's proclib" >&2
 	exit 16
 fi
 activeproclib="PROC${activeprocnum}"
-opercmd '$del proclib(zbrewpr)' >/dev/null 2>&1
+opercmd '$del proclib(zospmpr)' >/dev/null 2>&1
 result=`opercmd "\\$D proclib(${activeproclib})" 2>/dev/null`
 if [ $? -gt 0 ]; then
 	echo "Unable to get dataset list for PROCLIB(${activeproclib})" >&2
@@ -116,14 +116,14 @@ fi
 first=true
 for dataset in ${datasets}; do
 	if "${first}" ; then 
-		result=`opercmd "\\$ADD proclib(zbrewpr),dd(01)=dsn=${dataset}" 2>/dev/null`
+		result=`opercmd "\\$ADD proclib(zospmpr),dd(01)=dsn=${dataset}" 2>/dev/null`
 		first=false
 	else
-		result=`opercmd "\\$T proclib(zbrewpr),dd(99)=dsn=${dataset}" 2>/dev/null`
+		result=`opercmd "\\$T proclib(zospmpr),dd(99)=dsn=${dataset}" 2>/dev/null`
 	fi
 done
 
-result=`opercmd "\\$T proclib(zbrewpr),name=${activeproclib}" 2>/dev/null`
-opercmd '$del proclib(zbrewpr)' >/dev/null 2>&1
+result=`opercmd "\\$T proclib(zospmpr),name=${activeproclib}" 2>/dev/null`
+opercmd '$del proclib(zospmpr)' >/dev/null 2>&1
 registrar "${sw}" "${verb}" "${procds}" "${member}" "${header}" "${footer}" "${pfx}" "${sfx}" "${text}"
 exit $?

@@ -20,7 +20,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -28,11 +28,11 @@ msg() {
 #
 syntax() {
 	echo "\
-zbrew smpreceiveptf <prefix> <sequential_or_pds_filename>
+zospm smpreceiveptf <prefix> <sequential_or_pds_filename>
 	    
 Examples:
-	zbrew smpreceiveptf igy630 'igy630.ptfs(UI12345)' >&2 
-	zbrew smpreceiveptf igy630 'igy630.ptf1'" >&2 
+	zospm smpreceiveptf igy630 'igy630.ptfs(UI12345)' >&2 
+	zospm smpreceiveptf igy630 'igy630.ptf1'" >&2 
 	exit 16
 }
 
@@ -44,14 +44,14 @@ receivefromzos() {
 	fi
 	rcvcmd='RECEIVE SYSMODS'
 
-	tmpCntlHFS=${ZBREW_TMP}/$$.cntl.xml
+	tmpCntlHFS=${ZOSPM_TMP}/$$.cntl.xml
 
 	cat >${tmpCntlHFS} <<zzz
   SET BDY(GLOBAL).
   ${rcvcmd} .
 zzz
 
-	smpout=`smp -i ${ZBREW_SRC_HLQ}${sw}G.GLOBAL.CSI -f ${SMPPTFIN} -w ${ZBREW_TMP} -r ${ZBREW_TMP}/rpt -p ${ZBREW_TMP}/sysprint <${tmpCntlHFS}`
+	smpout=`smp -i ${ZOSPM_SRC_HLQ}${sw}G.GLOBAL.CSI -f ${SMPPTFIN} -w ${ZOSPM_TMP} -r ${ZOSPM_TMP}/rpt -p ${ZOSPM_TMP}/sysprint <${tmpCntlHFS}`
 	rc=$?
 	if [ ${rc} -gt 0 ]; then
 		echo "SMP/E RECEIVE for ${SMPPTFIN} failed." >&2
@@ -68,7 +68,7 @@ zzz
 	return ${rc} 
 }
 
-. zbrewsetenv 
+. zospmsetenv 
 
 debug=0
 verbose=0
@@ -104,7 +104,7 @@ zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
 testin=`echo "$2" | awk -F. '{print $2}'`
 if [ "${testin}" = "" ]; then
-        zosfile="${ZBREW_SRC_HLQ}PTF.${zosname}.$2"
+        zosfile="${ZOSPM_SRC_HLQ}PTF.${zosname}.$2"
 else
         zosfile=$2
 fi

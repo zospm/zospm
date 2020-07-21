@@ -1,9 +1,0 @@
-#
-# the functions listed below can be used externally by software packages
-#
-
-. zbrewiofuncs
-. zbrewcicsfuncs
-. zbrewjclfuncs
-. zbrewosfuncs
-. zbrewsecurityfuncs

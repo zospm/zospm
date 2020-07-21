@@ -6,24 +6,25 @@
 syntax() {
 	echo "\
 Syntax:
-	zbrewswenabled <sw> 
+	zospmarchive <sw> 
 Notes:
-	Returns 0 if ZBREW_<sw>_CSI is defined and not NONE or empty, non-zero otherwise
+	\$ZOSPM_TMP/<sw>.dzp is where the archive will be written to
 
 " >&2
      	exit 8
 }
 
+. zospmsetenv
+
 if ! [ $# -eq 1 ]; then
 	echo "Expected 1 parameter but $# parameters specified ($*)" >&2
-        echo "zbrewswenabled <sw>" >&2
+        echo "zospmarchive <sw>" >&2
  	syntax
         exit 8
 fi  
 
-. zbrewsetenv 
-
 ussname=$(echo $1 | tr '[:upper:]' '[:lower:]');
 zosname=$(echo $1 | tr '[:lower:]' '[:upper:]');
 
-exit 0
+dzip -s1G "${ZOSPM_TMP}/${ussname}.dzp" "${ZOSPM_SRC_HLQ}${zosname}.*" 
+exit $rc

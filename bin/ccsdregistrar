@@ -23,7 +23,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -39,7 +39,7 @@ Examples:
 	Disable EQAE20 CCSD from GROUP EQA
         	ccsdregistrar eqae20 disable
 Note:
-	The CCSD at \${ZBREW_TGT_HLQ}CICS.DFHCSD will be updated with the new CCSD information under GROUP(<prefix>) and LIST(ZBREW_DFH_GRPLIST)
+	The CCSD at \${ZOSPM_TGT_HLQ}CICS.DFHCSD will be updated with the new CCSD information under GROUP(<prefix>) and LIST(ZOSPM_DFH_GRPLIST)
 		(where <prefix> is the first 3 letters of <swname>)
 	Enabling a member that already has an entry is an error.
 	Disabling a member that does not have an entry is silent.
@@ -79,22 +79,22 @@ text="$3"
 
 prefix=`echo "${sw}" | awk '{ print substr($1, 0, 3) }'`
 
-. zbrewsetenv
+. zospmsetenv
 
-list=${ZBREW_DFH_GRPLIST}
+list=${ZOSPM_DFH_GRPLIST}
 args='PAGESIZE(9999)'
 
 out=/tmp/dfhcsdup.$$.out
 touch "${out}"
 if [ "${verb}" = "ENABLE" ]; then
-	mvscmd --pgm=DFHCSDUP --args="${args}" --steplib=${ZBREW_DFHHLQ}.CICS.SDFHLOAD --dfhcsd=${ZBREW_TGT_HLQ}CICS.DFHCSD --sysprint="${out}" --sysin=stdin <<zz
+	mvscmd --pgm=DFHCSDUP --args="${args}" --steplib=${ZOSPM_DFHHLQ}.CICS.SDFHLOAD --dfhcsd=${ZOSPM_TGT_HLQ}CICS.DFHCSD --sysprint="${out}" --sysin=stdin <<zz
 DELETE ALL GROUP(${prefix}) REMOVE
 ${text}
 ADD GROUP(${prefix}) LIST(${list})
 zz
 rc=$?
 else 
-	mvscmd --pgm=DFHCSDUP --args="${args}" --steplib=${ZBREW_DFHHLQ}.CICS.SDFHLOAD --dfhcsd=${ZBREW_TGT_HLQ}CICS.DFHCSD --sysprint="${out}" --sysin=stdin <<zz
+	mvscmd --pgm=DFHCSDUP --args="${args}" --steplib=${ZOSPM_DFHHLQ}.CICS.SDFHLOAD --dfhcsd=${ZOSPM_TGT_HLQ}CICS.DFHCSD --sysprint="${out}" --sysin=stdin <<zz
 DELETE ALL GROUP(${prefix}) REMOVE
 zz
 rc=$?

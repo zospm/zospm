@@ -1,11 +1,11 @@
 {
-  "$id": "https://zbrew.dev/zbrew/zbrew.schema.json",
+  "$id": "https://zospm.dev/zospm/zospm.schema.json",
   "$schema": "http://json-schema.org/2019-09/schema#",
-  "title": "zbrew software package json schema",
+  "title": "zospm software package json schema",
   "type": "object",
   "properties": {
     "software": {
-      "description": "zbrew Software Package object",
+      "description": "zospm Software Package object",
       "type": "array",
       "items": {
         "type": "object",

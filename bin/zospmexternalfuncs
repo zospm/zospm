@@ -1,0 +1,9 @@
+#
+# the functions listed below can be used externally by software packages
+#
+
+. zospmiofuncs
+. zospmcicsfuncs
+. zospmjclfuncs
+. zospmosfuncs
+. zospmsecurityfuncs

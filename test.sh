@@ -4,17 +4,17 @@
 # Run through each of the tests in the test bucket that aren't 
 # explicitly excluded, and return the highest error code
 #
-# Override the ZBREW_SRC_HLQ to ensure test datasets go to ZBREWV (for verification) instead of ZBREW
+# Override the ZOSPM_SRC_HLQ to ensure test datasets go to ZOSPMV (for verification) instead of ZOSPM
 #
-export ZBREW_SRC_HLQ=ZBREWVS.
-export ZBREW_SRC_ZFSROOT="${ZBREW_TMP}/zbrewvs/"
-export ZBREW_TGT_HLQ=ZBREWVT.
-export ZBREW_TGT_ZFSROOT="${ZBREW_TMP}/zbrewvt/"
+export ZOSPM_SRC_HLQ=ZOSPMVS.
+export ZOSPM_SRC_ZFSROOT="${ZOSPM_TMP}/zospmvs/"
+export ZOSPM_TGT_HLQ=ZOSPMVT.
+export ZOSPM_TGT_ZFSROOT="${ZOSPM_TMP}/zospmvt/"
 
-. zbrewsetenv
-export PATH=$ZBREW_ROOT/testtools:$PATH
+. zospmsetenv
+export PATH=$ZOSPM_ROOT/testtools:$PATH
 
-. zbrewtestfuncs
+. zospmtestfuncs
 runtests "${mydir}/tests" "$1"
 exit $?
 

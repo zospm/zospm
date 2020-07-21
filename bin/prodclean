@@ -24,7 +24,7 @@ msg() {
                 ${PrefixTooLong}) msgtext="Prefix must be 6 characters or less. Received: ";;
                 *) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
         esac
-        echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+        echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 
@@ -56,13 +56,13 @@ if [ $# -lt 1 ]; then
         exit 16
 fi
 
-. zbrewsetenv
+. zospmsetenv
 sw=$1
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
 zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 prefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
 
-smpelibs="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}bom.json"
+smpelibs="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}bom.json"
 ussname=$(echo ${ussname} | tr '[:lower:]' '[:upper:]')
 
 swparent=`readparent ${ussname} <${smpelibs}`
@@ -92,7 +92,7 @@ if [ "$swchild" != "0" ] && [ "$swchild" != "" ]; then
 	echo " " >&2
         echo "Warning: Product $zosname is in a child/parent relationshiop and has other products installed in it's SMP/E zone" >&2
         echo "By running uninstall or using the -c option for $zosname, means the below listed products are also affected." >&2
-        echo "Zbrew will automatically uninstall all the below listed products as a result." >&2
+        echo "zospm will automatically uninstall all the below listed products as a result." >&2
         echo "If desired you will need to reinstall these products after re-installing $zosname." >&2
 	echo " " >&2
 	echo "The following Product(s) are affected and will be uninstalled if required: ">&2
@@ -102,14 +102,14 @@ if [ "$swchild" != "0" ] && [ "$swchild" != "" ]; then
         for ch in ${swchild}; do
 		swchild_lower=$(echo ${ch} | tr '[:upper:]' '[:lower:]');
 		chprefix=`echo "${swchild_lower}" | awk '{ print substr($1, 0, 3) }'`
-		swdir="${ZBREW_REPOROOT}/zbrew-${chprefix}/${swchild_lower}/"
+		swdir="${ZOSPM_REPOROOT}/zospm-${chprefix}/${swchild_lower}/"
 		if [ -e "${swdir}" ]; then
 	                if [ "${verbose}" = "1" ]; then
 	                        echo " " >&2
         	                echo "Proceeding to uninstall $ch" >&2
                 	fi
 			opts="${opts} -q" 
-			ninst=`zbrew ${opts} uninstall ${ch}`
+			ninst=`zospm ${opts} uninstall ${ch}`
 		        if [ "${rc}" != 0 ]; then
 		                echo "Uninstall of ${ch} failed." >&2
 	        	        echo "${uninst}" >&2
@@ -121,13 +121,13 @@ if [ "$swchild" != "0" ] && [ "$swchild" != "" ]; then
 	rc=$?
 fi
 
-zbrewmount -u -s $sw
+zospmmount -u -s $sw
 rc=$?
 if [ $rc -gt 0 ]; then
         echo "Dataset cleanup failed. UnInstall aborted"
         exit $rc
 fi
 
-drm -f "${ZBREW_SRC_HLQ}${zosname}*.**"
+drm -f "${ZOSPM_SRC_HLQ}${zosname}*.**"
 
 exit 0

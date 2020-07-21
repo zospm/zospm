@@ -1,20 +1,20 @@
 #
-# the functions listed below are used internally by zbrew related routines
+# the functions listed below are used internally by zospm related routines
 #
 
-zbrewlog() {
-	log_dir="${ZBREW_TMP}/zbrewlog"
+zospmlog() {
+	log_dir="${ZOSPM_TMP}/zospmlog"
 	log_msg=$*
 	log_time=$(date -u)
 	echo "${log_time} ${log_msg}" >> ${log_dir}
 }	
 
-zbrewdeploy() {
+zospmdeploy() {
 	dir="$1"
 	bom="$2"
 
 	if [ "${bom}" = "" ] || ! [ -d "${dir}" ] || ! [ -f "${bom}" ]; then
-		echo "Syntax: zbrewdeploy <directory> <bom>" >&2
+		echo "Syntax: zospmdeploy <directory> <bom>" >&2
 		echo "Deploy the bill of materials to the specified directory" >&2
 		return 8
 	fi
@@ -22,14 +22,14 @@ zbrewdeploy() {
 	mkdir -p "${dir}"
 	rc=$?
 	if [ $rc -gt 0 ]; then
-		echo "zbrewdeploy: Unable to make directory: ${dir}" >&2
+		echo "zospmdeploy: Unable to make directory: ${dir}" >&2
 		return $rc
 	fi
 
 	names=`cat "${bom}"`
 	rc=$?
 	if [ $rc -gt 0 ]; then
-		echo "zbrewdeploy: Unable to read bom file: ${bom}" >&2
+		echo "zospmdeploy: Unable to read bom file: ${bom}" >&2
 		return $rc
 	fi
 	code="${names}"
@@ -39,14 +39,14 @@ zbrewdeploy() {
 			mkdir -p "${dir}/${path}"
 			rc=$?
 			if [ $rc -gt 0 ]; then
-				echo "zbrewdeploy: Unable to make directory: ${dir}/${path}" >&2
+				echo "zospmdeploy: Unable to make directory: ${dir}/${path}" >&2
 				return $rc
 			fi
 		fi
 		cp -p "${c}" "${dir}/${c}"
 		rc=$?
 		if [ $rc -gt 0 ]; then
-			echo "zbrewdeploy: Unable to copy file ${c} to file ${dir}/${c}" >&2
+			echo "zospmdeploy: Unable to copy file ${c} to file ${dir}/${c}" >&2
 			return $rc
 		fi
 	done
@@ -54,7 +54,7 @@ zbrewdeploy() {
 }
 
 	
-zbrewtest() {
+zospmtest() {
 	lmsg="$1"
 	lexpected="$2"
 	lactual="$3"
@@ -63,8 +63,8 @@ zbrewtest() {
 		echo "Test Failed. ${lmsg}" >&2
 		lines=`echo "${lexpected}" | wc -l | xargs echo`
 		if [ ${lines} -gt 1 ]; then
-			fexpected=/tmp/$$.zbrewtest.expected
-			factual=/tmp/$$.zbrewtest.actual
+			fexpected=/tmp/$$.zospmtest.expected
+			factual=/tmp/$$.zospmtest.actual
 			echo "diff <expected> <actual>" >&2
 			echo "${lexpected}" >${fexpected}
 			echo "${lactual}" >${factual}
@@ -78,9 +78,9 @@ zbrewtest() {
 	fi	
 }
 
-zbrewprops() {
+zospmprops() {
 	if [ $# -lt 3 ]; then
-		echo "Syntax: zbrewprops <swname> <category> [<file>]+" >&2
+		echo "Syntax: zospmprops <swname> <category> [<file>]+" >&2
 		echo "where:" >&2
 		echo "  <swname> is the software these properties are associated with" >&2
 		echo "  <category> is the software category these properties are associated with" >&2
@@ -134,22 +134,22 @@ zbrewprops() {
 	return 0
 }
 
-zbrewpropse() {
-	zbrewprops $*
+zospmpropse() {
+	zospmprops $*
 	if [ $? -gt 0 ]; then
 		exit 4
 	fi
 	return 0
 }
 
-zbrewswinstalled() {
+zospmswinstalled() {
 	sw=$(echo $1 | tr '[:lower:]' '[:upper:]');
 
 	if [ "${sw}" = "" ]; then
-		echo "zbrewswinstalled: Error - need to specify the software to check" >&2
+		echo "zospmswinstalled: Error - need to specify the software to check" >&2
 		return 0
 	fi
-	csi="ZBREW_${sw}HLQ"
+	csi="ZOSPM_${sw}HLQ"
 	eval "value=\${$csi}"
 	if [ "${value}" = "" ] || [ "${value}" = "NONE" ]; then
 		return 0

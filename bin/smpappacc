@@ -21,7 +21,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -40,15 +40,15 @@ Examples:
 
 
 fmids() {
-        zbrewlog "fmids" $*
+        zospmlog "fmids" $*
         sw=$1
-        smplist="${ZBREW_TMP}/smpfmid.$$.smplist"
-        smpout=`smp -i "${ZBREW_SRC_HLQ}${zosname}G.GLOBAL.CSI" -l "${smplist}" <<zzz
+        smplist="${ZOSPM_TMP}/smpfmid.$$.smplist"
+        smpout=`smp -i "${ZOSPM_SRC_HLQ}${zosname}G.GLOBAL.CSI" -l "${smplist}" <<zzz
   SET BDY(GLOBAL).
   LIST FUNCTIONS.
 zzz`
         rc=$?
-        zbrewlog "fmids RC: ${rc}"
+        zospmlog "fmids RC: ${rc}"
         if [ $rc -eq 0 ]; then
                 fmids=`awk ' /= FUNCTION/ { print $1; }' ${smplist}`
                 uniq_fmids=`echo ${fmids} | tr ' ' '\n' | sort | uniq`
@@ -63,13 +63,13 @@ zzz`
 }
 
 fmidset() {
-        zbrewlog "fmidset" $*
+        zospmlog "fmidset" $*
         sw=$1
         shift
         fmids=$*
         fmidset="${sw}FS"
 
-        tmpCntlHFS="${ZBREW_TMP}/smpfmid.$$.smpcntl"
+        tmpCntlHFS="${ZOSPM_TMP}/smpfmid.$$.smpcntl"
         echo "  SET BDY(GLOBAL)." >>${tmpCntlHFS}
         echo "  UCLIN." >>${tmpCntlHFS}
         echo "  REP FMIDSET(${fmidset})" >>${tmpCntlHFS}
@@ -79,9 +79,9 @@ fmidset() {
         done
         echo "  )." >>${tmpCntlHFS}
         echo "  ENDUCL." >>${tmpCntlHFS}
-        smpout=`smp -i "${ZBREW_SRC_HLQ}${zosname}G.GLOBAL.CSI" <${tmpCntlHFS}`
+        smpout=`smp -i "${ZOSPM_SRC_HLQ}${zosname}G.GLOBAL.CSI" <${tmpCntlHFS}`
         rc=$?
-        zbrewlog "fmidset RC: ${rc}"
+        zospmlog "fmidset RC: ${rc}"
         rm ${tmpCntlHFS}
         if [ $rc -gt 4 ] || [ $verbose -gt 0 ]; then
                 echo "fmidset ended with return code: $rc" >&2
@@ -112,7 +112,7 @@ runapply() {
                 echo "Running ${smpfunc} ${check} ${sw} ${fmidset}" >&2
         fi
 	
-	tmpCntlHFS=${ZBREW_TMP}/$$.${check}.cntl.xml
+	tmpCntlHFS=${ZOSPM_TMP}/$$.${check}.cntl.xml
 
 	if [ "${smpfunc}" = "APPLY" ]; then
 		echo "  SET BDY(${zosname}T)." >${tmpCntlHFS}
@@ -145,12 +145,12 @@ runapply() {
 	echo "  RETRY(YES)" >>${tmpCntlHFS}
 	echo "  BYPASS(HOLDSYSTEM,HOLDUSER,HOLDCLASS(HIPER))." >>${tmpCntlHFS}
 	
-	smprpt="${ZBREW_TMP}/$$.smprpt"
-	smpsysprint="${ZBREW_TMP}/$$.sysprint"
+	smprpt="${ZOSPM_TMP}/$$.smprpt"
+	smpsysprint="${ZOSPM_TMP}/$$.sysprint"
 	
-	smpout=`smp -w ${ZBREW_TMP} -r "${smprpt}" -p "${smpsysprint}" -i ${ZBREW_SRC_HLQ}${zosname}G.GLOBAL.CSI <${tmpCntlHFS}`
+	smpout=`smp -w ${ZOSPM_TMP} -r "${smprpt}" -p "${smpsysprint}" -i ${ZOSPM_SRC_HLQ}${zosname}G.GLOBAL.CSI <${tmpCntlHFS}`
 	rc=$?
-	zbrewlog "${smpfunc} ${check} ${sw} Return Code: ${rc}"
+	zospmlog "${smpfunc} ${check} ${sw} Return Code: ${rc}"
 	rm "${tmpCntlHFS}"
 	if [ $verbose -gt 0 ]; then
 		echo "${smpout}" >&2
@@ -206,7 +206,7 @@ while getopts ":vdpqrstf" opt; do
       ;;
     \?)
       if [ ${OPTARG} != "?" ]; then
-	msg zbrew ${InvalidOption} E "${OPTARG}"
+	msg zospm ${InvalidOption} E "${OPTARG}"
       fi
       syntax
       exit 4
@@ -215,18 +215,18 @@ while getopts ":vdpqrstf" opt; do
 done
 shift $(expr $OPTIND - 1 )
 if [ $# -lt 1 ]; then
-	msg zbrew ${TooFewParms} E "$#"
+	msg zospm ${TooFewParms} E "$#"
 	syntax
 	exit 16
 fi
 
-. zbrewsetenv
+. zospmsetenv
 
 zosname=$(echo ${1} | tr '[:lower:]' '[:upper:]') 
 ussname=$(echo ${1} | tr '[:upper:]' '[:lower:]');
 prefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
 
-bomfile="${ZBREW_REPOROOT}/zbrew-${prefix}/${ussname}/${ussname}bom.json"
+bomfile="${ZOSPM_REPOROOT}/zospm-${prefix}/${ussname}/${ussname}bom.json"
 swparent=`readparent ${ussname} <${bomfile}`
 rc=$?
 if [ $rc -gt 0 ]; then

@@ -23,7 +23,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -39,8 +39,8 @@ Examples:
 	Disable PPT specification for ZWESIS01
         	pptregistrar zwe1b0 disable 
 Note:
-	The PDS \${ZBREW_TGT_HLQ}PARMLIB is created if it does not already exist
-	The PDS member SCHED\${ZBREW_PARMLIB_SFX} is created if it does not already exist
+	The PDS \${ZOSPM_TGT_HLQ}PARMLIB is created if it does not already exist
+	The PDS member SCHED\${ZOSPM_PARMLIB_SFX} is created if it does not already exist
 	The PDS member will have the new PPT entries added if 'enable' is specified
 	The PDS member will have the PPT entries removed if 'disable' is specified.
 	Enabling a product that already has an entry is an error.
@@ -77,7 +77,7 @@ if [ $# -lt 3 ]; then
         exit 8
 fi  
 
-. zbrewsetenv 
+. zospmsetenv 
 
 sw=$(echo $1 | tr '[:lower:]' '[:upper:]');
 verb=$(echo $2 | tr '[:lower:]' '[:upper:]');
@@ -88,8 +88,8 @@ sfx="*/"
 header="${pfx} --- ${sw} SCHED start --- ${sfx}"
 footer="${pfx} --- ${sw} SCHED end   --- ${sfx}"
 
-parmlibds="${ZBREW_TGT_HLQ}PARMLIB"
-member="SCHED${ZBREW_PARMLIB_SFX}"
+parmlibds="${ZOSPM_TGT_HLQ}PARMLIB"
+member="SCHED${ZOSPM_PARMLIB_SFX}"
 
 parmlibAddDataset "${parmlibds}"
 rc=$?
@@ -104,7 +104,7 @@ if [ $rc -gt 0 ]; then
 	echo "schedregistrar failed for ${text}" >&2
 	exit $rc
 fi
-opercmd "SET SCH=${ZBREW_PARMLIB_SFX}"
+opercmd "SET SCH=${ZOSPM_PARMLIB_SFX}"
 rc=$?
 if [ $rc -gt 0 ]; then
 	echo "schedregistrar: unable to dynamically update ${parmlibds}(${member}) with SET SCH" >&2

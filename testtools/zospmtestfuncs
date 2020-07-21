@@ -1,5 +1,5 @@
 #
-# General test functions for use by zbrew and sw packages using zbrew
+# General test functions for use by zospm and sw packages using zospm
 #
 runtests() {
 #set -x

@@ -23,7 +23,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -39,9 +39,9 @@ Examples:
 	Disable syslogd on the system for eqae20 
         	syslogdregistrar eqae20 disable syslogd
 Note:
-	ZBREW_SYSLOGD_TMP is used to specify the 'tmp' directory to write logs to
+	ZOSPM_SYSLOGD_TMP is used to specify the 'tmp' directory to write logs to
 	Enabling syslogd does nothing if /etc/syslog.conf and /etc/rc files already exists
-	Disabling syslogd does nothing if the syslogd configuration is not zbrew-managed, otherwise it removes the configuration files
+	Disabling syslogd does nothing if the syslogd configuration is not zospm-managed, otherwise it removes the configuration files
 " >&2
      	exit 8
 }
@@ -80,7 +80,7 @@ sfx="#"
 header="${pfx} --- ${sw} start --- ${sfx}"
 footer="${pfx} --- ${sw} end   --- ${sfx}"
 
-. zbrewsetenv
+. zospmsetenv
 
 # MSF - this implementation is not complete
 # We should track the software packages that get 'enabled' in the 
@@ -101,9 +101,9 @@ if [ "${verb}" = "DISABLE" ]; then
 fi
 
 echo " # /etc/syslog.conf - control output of syslogd
-auth.*	${ZBREW_SYSLOGD_TMP}/syslog.auth.log
-*.err	${ZBREW_SYSLOGD_TMP}/syslog.error.log
-*.debug	${ZBREW_SYSLOGD_TMP}/syslog.debug.log
+auth.*	${ZOSPM_SYSLOGD_TMP}/syslog.auth.log
+*.err	${ZOSPM_SYSLOGD_TMP}/syslog.error.log
+*.debug	${ZOSPM_SYSLOGD_TMP}/syslog.debug.log
 " >"${etcconf}"
 
 echo "#Start the SYSLOGD daemon for logging

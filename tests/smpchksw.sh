@@ -2,7 +2,7 @@
 #
 # Basic test to ensure smpchksw is working ok
 #
-. zbrewsetenv
+. zospmsetenv
 
 #
 # The following are valid for a z/OS 2.3 ADCD distro
@@ -35,7 +35,7 @@ else
 	grep "${expected}" ${errout} >/dev/null
 	if [ $? -gt 0 ]; then
 		actual=`cat ${errout}`
-		zbrewtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
+		zospmtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
 		exit 3
 	fi
 fi
@@ -55,7 +55,7 @@ else
  	grep "${expected}" ${errout} >/dev/null
         if [ $? -gt 0 ]; then
 		actual=`cat ${errout}`
-                zbrewtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
+                zospmtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
       		exit 3
 	fi
 fi
@@ -75,7 +75,7 @@ else
         grep "${expected}" ${errout} >/dev/null
 	if [ $? -gt 0 ]; then
 		actual=`cat ${errout}`
-                zbrewtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
+                zospmtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
 		exit 3
         fi
 fi
@@ -92,7 +92,7 @@ else
         grep "${expected}" ${errout} >/dev/null
 	if [ $? -gt 0 ]; then
  		actual=`cat ${errout}`
-                zbrewtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
+                zospmtest "smpchksw failed with incorrect message" "${expected}" "${actual}"
  		exit 3
         fi
 fi

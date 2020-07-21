@@ -21,7 +21,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -43,8 +43,8 @@ chkfmid() {
 	tgtzone="${2}"
 	fmid="${3}"
 
-	tmpCntlHFS=${ZBREW_TMP}/$$.${tgtzone}.fmidcntl.xml
-	ptflist=${ZBREW_TMP}/$$.${tgtzone}.fmidsmp.ptflst
+	tmpCntlHFS=${ZOSPM_TMP}/$$.${tgtzone}.fmidcntl.xml
+	ptflist=${ZOSPM_TMP}/$$.${tgtzone}.fmidsmp.ptflst
 	touch ${ptflist}
 
 	if [ ${verbose} -gt 0 ]; then
@@ -99,8 +99,8 @@ chkptfs() {
 	ptfs="${*}"
 	requiredptfs="${ptfs}"
 
-	tmpCntlHFS=${ZBREW_TMP}/$$.$tgtzone.cntl.xml
-	ptflist=${ZBREW_TMP}/$$.$tgtzone.smp.ptflst
+	tmpCntlHFS=${ZOSPM_TMP}/$$.$tgtzone.cntl.xml
+	ptflist=${ZOSPM_TMP}/$$.$tgtzone.smp.ptflst
 
 	echo "  SET BOUNDARY(${tgtzone})." >${tmpCntlHFS}
 	echo "  LIST SYSMODS(" >>${tmpCntlHFS}
@@ -170,8 +170,8 @@ runchk() {
 		echo "No PTFs to check" >&2
 		return 0
 	fi
-	tmpCntlHFS=${ZBREW_TMP}/$$.gzone.cntl.xml
-	gzonelist=${ZBREW_TMP}/$$.gzone.smp.gzonelst
+	tmpCntlHFS=${ZOSPM_TMP}/$$.gzone.cntl.xml
+	gzonelist=${ZOSPM_TMP}/$$.gzone.smp.gzonelst
 	touch ${gzonelist}
 
 	echo "  SET BOUNDARY(GLOBAL).
@@ -268,7 +268,7 @@ while getopts ":vdf" opt; do
       ;;
     \?)
       if [ ${OPTARG} != "?" ]; then
-	msg zbrew ${InvalidOption} E "${OPTARG}"
+	msg zospm ${InvalidOption} E "${OPTARG}"
       fi
       syntax
       exit 4
@@ -277,12 +277,12 @@ while getopts ":vdf" opt; do
 done
 shift $(expr $OPTIND - 1 )
 if [ $# -lt 2 ]; then
-	msg zbrew ${TooFewParms} E "$#"
+	msg zospm ${TooFewParms} E "$#"
 	syntax
 	exit 16
 fi
 
-. zbrewsetenv
+. zospmsetenv
 
 parms="$(echo ${*} | tr '[:lower:]' '[:upper:]')"
 out=`runchk ${parms}`

@@ -20,7 +20,7 @@ msg() {
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
-	echo "ZCL000"${msgnum}${msgtype} "${msgtext}${args}" >&2
+	echo "ZPM000"${msgnum}${msgtype} "${msgtext}${args}" >&2
 }
 
 #
@@ -31,7 +31,7 @@ syntax() {
 smpfromnts [-vd] <prefix> <nts-directory
 	    
 Examples:
-	smpfromnts igy630 ${ZBREW_TMP}/smpnts.igy630 <-- Perform SMP/RECEIVE FROMNTS on previously downloaded product in ${ZBREW_TMP}/igy630" >&2 
+	smpfromnts igy630 ${ZOSPM_TMP}/smpnts.igy630 <-- Perform SMP/RECEIVE FROMNTS on previously downloaded product in ${ZOSPM_TMP}/igy630" >&2 
 	exit 16
 }
 
@@ -54,14 +54,14 @@ receivefromnts() {
 		rcvcmd='RECEIVE'
 	fi
 
-	tmpCntlHFS=${ZBREW_TMP}/$$.cntl.xml
+	tmpCntlHFS=${ZOSPM_TMP}/$$.cntl.xml
 
 	cat >${tmpCntlHFS} <<zzz
   SET BDY(GLOBAL).
   ${rcvcmd} FROMNTS('${order}').
 zzz
 
-	smpout=`smp -i ${ZBREW_SRC_HLQ}${csiname}G.GLOBAL.CSI -w ${ZBREW_TMP} -n ${NTS} -r ${ZBREW_TMP}/rpt -p ${ZBREW_TMP}/sysprint <${tmpCntlHFS}`
+	smpout=`smp -i ${ZOSPM_SRC_HLQ}${csiname}G.GLOBAL.CSI -w ${ZOSPM_TMP} -n ${NTS} -r ${ZOSPM_TMP}/rpt -p ${ZOSPM_TMP}/sysprint <${tmpCntlHFS}`
 	rc=$?
 	if [ ${rc} -gt 0 ]; then
 		echo "SMP/E RECEIVE FROMNTS of ${sw} failed." >&2
@@ -74,7 +74,7 @@ zzz
 	return ${rc} 
 }
 
-. zbrewsetenv
+. zospmsetenv
 
 debug=0
 verbose=0
@@ -109,9 +109,9 @@ zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
 prefix=`echo "${zosname}" | awk '{ print substr($1, 0, 3) }'`
 lprefix=`echo "${ussname}" | awk '{ print substr($1, 0, 3) }'`
-NTS="${ZBREW_TMP}/smpnts.${zosname}"
+NTS="${ZOSPM_TMP}/smpnts.${zosname}"
 
-bomfile="${ZBREW_REPOROOT}/zbrew-${lprefix}/${ussname}/${ussname}bom.json"
+bomfile="${ZOSPM_REPOROOT}/zospm-${lprefix}/${ussname}/${ussname}bom.json"
 swparent=`readparent ${ussname} <${bomfile}`
 rc=$?
 if [ $rc -gt 0 ]; then
@@ -126,10 +126,10 @@ fi
 
 
 if [ "$prefix" = "ZHW" ]; then
-        rm -rf /$ZBREW_TMP/smpnts.ZHW110 2>/dev/null
+        rm -rf /$ZOSPM_TMP/smpnts.ZHW110 2>/dev/null
 	order='order1'
         mkdir -p "${NTS}/${order}"
-        prodpkg="${ZBREW_REPOROOT}/zbrew-${lprefix}/${ussname}/${ussname}crtpkg"
+        prodpkg="${ZOSPM_REPOROOT}/zospm-${lprefix}/${ussname}/${ussname}crtpkg"
         if [ -f "${prodpkg}" ]; then
                 ${prodpkg} ${NTS}/${order}
                 rc=$?
