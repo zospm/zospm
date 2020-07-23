@@ -38,7 +38,7 @@ bin/zospmjclfuncs
 bin/zospmmount
 bin/zospmosfuncs
 bin/zospmrestore
-bin/zospmrunconfig
+bin/zospmsteps
 bin/zospmsecurityfuncs
 bin/zospmsetenv
 bin/zospmsetswenv
