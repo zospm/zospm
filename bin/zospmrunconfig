@@ -1,0 +1,35 @@
+#!/bin/sh
+syntax() {
+	echo "Syntax: zospmrunsteps config|deconfig <sw> " >&2
+	echo "  where <sw> is the software directory steps you want to run for either configuration or deconfiguration" >&2
+	exit 8
+}
+ 
+if [ $# -ne 2 ]; then
+	syntax
+fi
+
+verb=$(echo $1 | tr '[:upper:]' '[:lower:]');
+sw=$(echo $2 | tr '[:upper:]' '[:lower:]');
+
+if [ "$verb" != "config" ] && [ "$verb" != "deconfig" ]; then
+	echo "Specify an action of config OR deconfig. $verb specified." >&2
+	exit 8
+fi
+
+if ! [ -d "$ZOSPM_WORKROOT/$verb/$sw" ]; then
+	if ! [ -d "$ZOSPM_WORKROOT" ]; then
+		echo "Ensure that you set ZOSPM_WORKROOT environment variable to point to your zospm working root directory" >&2
+		syntax
+	fi
+	echo "Directory: $ZOSPM_WORKROOT/$verb/$sw does not exist. Ensure you have already ran zospm $sw ${verb}ure" >&2
+fi 
+
+steps=`ls $ZOSPM_WORKROOT/$verb/$sw/*`    
+if [ "$verb" = "deconfig" ]; then
+	steps=`echo "$steps" | sort -r`
+fi
+
+for step in $steps; do
+	echo $step;
+done
