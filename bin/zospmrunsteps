@@ -31,5 +31,9 @@ if [ "$verb" = "deconfig" ]; then
 fi
 
 for step in $steps; do
-	echo $step;
+	$step
+	rc=$?
+	if [ $rc -gt 0 ]; then
+		exit $rc;
+	fi
 done
