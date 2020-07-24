@@ -623,6 +623,17 @@ if ! [ -d "${workdir}" ]; then
 fi
 
 export ZOSPM_WORKROOT="${workdir}"
+
+#
+# Confirm that the PATH includes zospm (and therefore the other tools like zospmsetenv)
+#
+whence zospm >/dev/null 2>&1
+rc=$?
+if [ $rc -gt 0 ]; then
+	echo "zospm requires that your PATH include the 'bin' directory for zospm - do not try to invoke zospm directly" >&2
+	exit $rc
+fi
+
 . zospmsetenv
 
 sw=$2
