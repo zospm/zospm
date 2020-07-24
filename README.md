@@ -1,7 +1,7 @@
 # zospm
 _zospm_ is an experimental idea for z/OS package management.
 
-_zospm_ lets you search, secure, install and configure software on z/OS using a prescriptive approach, 
+_zospm_ lets you search, download, install and configure software on z/OS using a prescriptive approach, 
 especially with respect to naming conventions for the software. 
 
 ***zospm Development Philosophy***
@@ -29,8 +29,6 @@ to the underlying product:
 
 - **Prerequisites Checking**: products require other software to function correctly. Before installing the software,
 a check needs to be made that the products are available, configured correctly, and with the right level of maintenance.
-- **Secure**: products require security changes to be made to function correctly. The security updates would typically 
-be performed by a different person on a production system (TBD... not yet in the code base)
 - **Installation**: products require datasets to be allocated and zFS directories to be created before an SMP/E apply 
 can be performed. 
 - **Configuration**: products need to be configured after the software is installed. This configuration step may be as 
@@ -40,24 +38,27 @@ configure software
 ***How to install zospm:***
 
 *From github*
-You can download zospm from github directly into _ZOSPMROOT_. You will need to 'build' zospm before you can use it. To do so:
-- cd _ZOSPMROOT_
+You can download zospm from github directly into _ZOSPM\_ROOT_, e.g. /usr/lpp/zospm. You will need to 'build' zospm before you can use it. To do so:
+- cd _ZOSPM\_ROOT_
 - cd ..
 - git clone git@github.com:zospm/zospm.git
-- cd _ZOSPMROOT_/build
+- cd _ZOSPM\_ROOT_/build
 - ./build.sh
 
 *From bintray*
 You can also get zospm from bintray: https://bintray.com/zospm/zospm
 To install from bintray:
-- Download the pax file from bintray to your desktop, then upload via sftp to _ZOSPMROOT_
+- Download the latest pax file from bintray to your desktop, then upload via sftp to _ZOSPM\_ROOT_
 - Log on to z/OS
-- mkdir _ZOSPMROOT_
-- cd _ZOSPMROOT_
+- mkdir _ZOSPM\_ROOT_
+- cd _ZOSPM\_ROOT_
 - pax -rf zospm_yyyymmddhhmm.pax
 
-You will then want to pick up pax files for each software package you want to install. 
-Start with _zospm-zhw_, which is just a hello world package, to ensure it all works. Install all pax files in the _ZOSPM\_WORKROOT_ directory. 
+You will then want to install zospm software installation and configuration packages for software you want to install. 
+Start with _zospm-zhw_, which is just a hello world package, to ensure it all works. Use:
+- zospm refresh zhw
+
+to install the hello-world zospm software installation package.
 
 If you want to look at any of the source for zospm, go to:
 - https://github.com/zospm/zospm
@@ -66,14 +67,14 @@ There are corresponding git repos for the software packages which have a -<sw> a
 
 ***How to run zospm:***
 
-The zospm program resides in _ZOSPMROOT/bin_ directory. You can either run the program with the fully qualified name or you can put the _ZOSPMROOT/bin_ directory into your PATH. The instructions that follow assume it is in your PATH. 
+The zospm program resides in _ZOSPM\_ROOT/bin_ directory. Put the _ZOSPM\_ROOT/bin_ directory into your PATH, e.g. _export PATH=$ZOSPM\_ROOT/bin:$PATH_
 You need to specify a zospm work root directory that zospm can read properties from and that it can write results to. You can either export the environment variable: _ZOSPM\_WORKROOT_ or you can specify the zospm work root directory with the -w option on the zospm command line.
 
 If you do not know the name of the product, issue:
 - zospm search _string_
 e.g.
 - zospm search debug
-which will then tell you that debug is _eqae20_ (EQA 14.2.0)
+which will then tell you that zospm knows how to install the IBM 14.2.0 Debugger, called _eqae20_ (EQA 14.2.0)
 
 To install a product, you will need the ORDER JSON file for that product. 
 Currently, we support products:
@@ -89,7 +90,7 @@ e.g.
 *For ShopZ:*
 - Go into ShopZ and order your CBPDO software as you normally would. You will be send information on how to install, along with a file called _rfnjobs.txt_
 - Copy this file to z/OS under _/tmp/rfnjobs.txt_, then issue:
-- _ZOSPMROOT/utils/shopzgenorder sw </tmp/rfnjobs.txt >ZOSPM_WORKROOT/*sw*order.json_, where _sw_ is the software you are installing, e.g. eqae20
+- _ZOSPM\_ROOT/utils/shopzgenorder sw </tmp/rfnjobs.txt >ZOSPM_WORKROOT/order/*sw*order.json_, where _sw_ is the software you are installing, e.g. eqae20
 
 *For Local zFS file system*
 - Only zhw110 has been created as a local zFS product. The ORDER file for _zhw110order.json_ is:
@@ -106,14 +107,14 @@ e.g.
 
 
 To run zospm to install and configure a particular software package, issue:
-- export ZOSPM_WORKROOT=<root>
+- export ZOSPM_WORKROOT=_root_ 
 - Set up your order, pkg, and props directories
 - zospm install _sw_
 - zospm configure _sw_
 e.g. to install and configure zhw110 using the ADCD V24 system configuration:
-- export ZOSPM_WORKROOT=$HOME/zospmwork
+- export ZOSPM_WORKROOT=/global/zospm/work
 - mkdir ${ZOSPM_WORKROOT}/props
-- cp ${ZOSPMROOT}/zospm/zospmglobalprops_ADCDV24.props ${ZOSPM_WORKROOT}/props
+- cp ${ZOSPM\_ROOT}/zospm/zospmglobalprops_ADCDV24.props ${ZOSPM_WORKROOT}/props
 - zospm install zhw110
 - zospm configure zhw110
 
