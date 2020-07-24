@@ -33,16 +33,14 @@ rc=$?
 if [ $rc -gt 4 ]; then
 	# Filter on 'empty dataset' (0ADR744W) message and if that is the only non-informational, treat the unzip as a pass
 	output=`cat "${dunzipout}" | awk '/^0ADR*/ { if (substr($1,8,1) != "I") { if ($1 != "0ADR744W") { print $1; } } }'`
-	if [ "${output}" = "" ]; then
-		rc=0
-		rm -f "${dunzipout}"
-	else
+	if [ "${output}" != "" ]; then
 		echo "zospmrestore: Restore of archive ${archive} failed." >&2
 		cat "${dunzipout}" >&2
 		rm -f "${dunzipout}"
 		exit $rc
 	fi
 fi
+rm -f "${dunzipout}"
 
 zospmmount -m -t $sw
 
