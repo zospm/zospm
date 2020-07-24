@@ -48,6 +48,7 @@ bin/apfregistrar
 bin/ccsdregistrar
 bin/commregistrar
 bin/llregistrar
+bin/pptregistrar
 bin/procregistrar
 bin/swregistrar
 bin/syslogdregistrar
