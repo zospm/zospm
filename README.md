@@ -45,6 +45,7 @@ You can download zospm from github directly into _ZOSPM\_ROOT_, e.g. /usr/lpp/zo
 - cd _ZOSPM\_ROOT_/build
 - ./build.sh
 
+
 *From bintray*
 You can also get zospm from bintray: https://bintray.com/zospm/zospm
 To install from bintray:
