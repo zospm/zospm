@@ -14,9 +14,9 @@ if ! [ -d "${ZOSPM_WORKROOT}" ]; then
 	echo "zospmsetswenv: ZOSPM_WORKROOT must point to the zospm work root directory" >&2
 	return 4
 fi
-sw=$(echo $1 | tr '[:upper:]' '[:lower:]');
+lcsw=$(echo $1 | tr '[:upper:]' '[:lower:]');
 ucsw=$(echo $1 | tr '[:lower:]' '[:upper:]');
-prefix=`echo ${sw} | awk '{print substr($0,0,3)}'`
+prefix=`echo ${lcsw} | awk '{print substr($0,0,3)}'`
 
-props="${ZOSPM_WORKROOT}/props/${sw}props.json"
+props="${ZOSPM_WORKROOT}/props/${lcsw}props.json"
 zospmpropse "${ucsw}" "props" "${props}"

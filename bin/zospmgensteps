@@ -55,7 +55,7 @@ cd "${indir}"
 steps=`echo *`
 cd "$OLDPWD"
 for step in ${steps}; do
-	outscript="${outfulldir}/${step}.sh"
+	outscript="${outfulldir}/${step}"
 	"${indir}/${step}" "${ucsw}" "${ucverb}" "${outscript}"
 	if [ $? -gt 0 ]; then
 		exit $?
