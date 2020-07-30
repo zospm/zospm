@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# Helper routine to generate directory of 'config' or 'deconfig' steps for a given software package version
+#     
+syntax() {
+	echo "zospmgensteps <sw> config|deconfig <input directory> <output directory>" >&2
+	echo "where <sw> is the software to generate steps for, e.g. zhw110" >&2
+	echo "<input directory> is the location of the ordered scripts used to generate config or deconfig scripts" >&2           
+	echo "<output directory> is where the generated config or deconfig scripts will be written to" >&2
+	echo "Example:" >&2
+	echo " Software package xmp120 has 2 steps to be generated for config and deconfig." >&2
+	echo " They are called 001_step and 002_step and reside in directory \$ZOSPM_REPOROOT/zospm-xmp/generate" >&2
+	echo " The generated files are to be written to \$ZOSPM_WORKROOT, sub-directories config and deconfig" >&2
+	echo " The configuration files are generated with: zospmgensteps xmp120 config \$ZOSPM_REPOROOT/zospm-xmp/generate \$ZOSPM_WORKROOT" >&2
+	echo " The de-configuration files are generated with: zospmgensteps xmp120 deconfig \$ZOSPM_REPOROOT/zospm-xmp/generate \$ZOSPM_WORKROOT" >&2
+	exit 16
+}
+
+if [ $# != 4 ]; then
+	echo "zospmgensteps: expected 4 parameters but received $#" >&2
+	syntax
+fi
+
+ucsw=$(echo $1 | tr '[:lower:]' '[:upper:]');
+lcsw=$(echo $1 | tr '[:upper:]' '[:lower:]');
+ucverb=$(echo $2 | tr '[:lower:]' '[:upper:]');
+lcverb=$(echo $2 | tr '[:upper:]' '[:lower:]');
+indir="$3"
+outdir="$4"
+
+if [ "${lcverb}" != "config" ] && [ "${lcverb}" != "deconfig" ]; then
+	echo "zospmgensteps: expected config or deconfig as the action but ${lcverb} specified" >&2
+	syntax
+fi
+
+if ! [ -d "${indir}" ]; then
+	echo "zospmgensteps: expected <input directory> to be a directory but ${indir} is not" >&2
+	syntax
+fi
+
+if ! [ -d "${outdir}" ]; then
+	echo "zospmgensteps: expected <output directory> to be a directory but ${outdir} is not" >&2
+	syntax
+fi
+
+outfulldir="${outdir}/${lcsw}/${lcverb}"
+mkdir -p "${outfulldir}"
+rc=$?
+if [ $rc -gt 0 ]; then
+	echo "zospmgensteps: Unable to create ${lcverb} output directory: ${outfulldir}" >&2
+	exit $rc
+fi
+
+cd "${indir}"
+steps=`echo *`
+cd "$OLDPWD"
+for step in ${steps}; do
+	outscript="${outfulldir}/${step}"
+	"${indir}/${step}" "${ucsw}" "${ucverb}" "${outscript}"
+	if [ $? -gt 0 ]; then
+		exit $?
+	fi
+done
