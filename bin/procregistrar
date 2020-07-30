@@ -77,6 +77,12 @@ if [ $# -lt 3 ]; then
 fi  
 sw=$(echo $1 | tr '[:lower:]' '[:upper:]');
 verb=$(echo $2 | tr '[:lower:]' '[:upper:]');
+if [ "${verb}" = "CONFIG" ]; then
+	verb="ENABLE"
+fi
+if [ "${verb}" = "DECONFIG" ]; then
+	verb="DISABLE"
+fi
 member=$(echo $3 | tr '[:lower:]' '[:upper:]');
 text="$4"
 

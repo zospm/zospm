@@ -43,7 +43,7 @@ if ! [ -d "${outdir}" ]; then
 	syntax
 fi
 
-outfulldir="${outdir}/${lcsw}/${lcverb}"
+outfulldir="${outdir}/${lcverb}/${lcsw}"
 mkdir -p "${outfulldir}"
 rc=$?
 if [ $rc -gt 0 ]; then
@@ -55,7 +55,7 @@ cd "${indir}"
 steps=`echo *`
 cd "$OLDPWD"
 for step in ${steps}; do
-	outscript="${outfulldir}/${step}"
+	outscript="${outfulldir}/${step}.sh"
 	"${indir}/${step}" "${ucsw}" "${ucverb}" "${outscript}"
 	if [ $? -gt 0 ]; then
 		exit $?

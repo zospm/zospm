@@ -74,6 +74,12 @@ if [ $# -lt 2 ]; then
 fi  
 sw=$(echo $1 | tr '[:lower:]' '[:upper:]');
 verb=$(echo $2 | tr '[:lower:]' '[:upper:]');
+if [ "${verb}" = "CONFIG" ]; then
+	verb="ENABLE"
+fi
+if [ "${verb}" = "DECONFIG" ]; then
+	verb="DISABLE"
+fi
 
 pfx="#"
 sfx="#"
