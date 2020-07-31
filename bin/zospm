@@ -60,6 +60,12 @@ Note:
 	zospm looks for software package information in ZOSPM_REPOROOT. If not specified, ZOSPM_REPOROOT defaults to 
 	the directory that zospm is installed into.
 
+	zospm looks for PTFs when processing smpreceiveptf as follows:
+		If the name specified starts with a '/', it is treated as an absolute zFS file name        
+		Otherwise, if the name specified contains a '.', it is treated as an absolute sequential dataset or PDS member
+		Otherwise the ptf <ptf> is searched for in: ZOSPM_HFS_ROOT/ptf/<sw>/<ptf>
+		And finally, the ptf <ptf> is searched for in ZOSPM_HLQ.PTF.<sw>.<ptf>
+
 Here is a sample order file for COBOL 6.3.0 you would create at \${ZOSPM_WORKROOT}/order/igy630order.json
 {
    "software": [{
@@ -91,7 +97,7 @@ zospm Examples:
 	zospm uninstall igy630 <-- remove all SMP/E datasets and product-specific datasets/filesystems
 	zospm configure igy630 <-- run product-specific configuration after SMP/E APPLY step
 	zospm deconfigure igy630 <-- run product-specific configuration removal after SMP/E APPLY step
-	zospm smpreceiveptf igy630 zos.file.name <-- receive a PTF from a z/OS sequential or PDS file
+	zospm smpreceiveptf igy630 ptf <-- receive a PTF from a sequential dataset, PDS member or zFS file
 " >&2 
 	exit 16
 }

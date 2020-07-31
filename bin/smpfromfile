@@ -16,7 +16,7 @@ msg() {
 
 	case ${msgnum} in 
 		${InvalidOption}) msgtext="Invalid option specified: -";;
-		${TooFewParms}) msgtext="Too few Parameters specified. Expected 3 but received: ";;
+		${TooFewParms}) msgtext="Too few Parameters specified. Expected 2 but received: ";;
 		${UnknownAction}) msgtext="Unknown action specified: ";;
 		*) msgtext="Internal Error. Unknow msgnum: ${msgnum}";;
 	esac
@@ -28,11 +28,11 @@ msg() {
 #
 syntax() {
 	echo "\
-zospm smpreceiveptf <prefix> <sequential_or_pds_filename>
+	smpreceivefromfile <prefix> <sequential_or_pds_filename>
 	    
 Examples:
-	zospm smpreceiveptf igy630 'igy630.ptfs(UI12345)' >&2 
-	zospm smpreceiveptf igy630 'igy630.ptf1'" >&2 
+	smpreceivefromfile igy630 'igy630.ptfs(UI12345)' >&2 
+	smpreceivefromfile igy630 'igy630.ptf1'" >&2 
 	exit 16
 }
 
@@ -99,17 +99,44 @@ if [ $# -lt 2 ]; then
 	exit 16
 fi
 
-sw=$1
+sw="$1"
 zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
-testin=`echo "$2" | awk -F. '{print $2}'`
-if [ "${testin}" = "" ]; then
-        zosfile="${ZOSPM_SRC_HLQ}PTF.${zosname}.$2"
+ptfname="$2"
+ussrest="${ptfname##*/}"
+dsrest="${ptfname%%.*}"
+if [ "$ptfname" != "$ussrest" ]; then
+	ptffile="${ptfname}"
+	if ! [ -f "${ptffile}" ]; then
+		echo "smpfromfile: Unable to find ptf file at HFS file ${ptfname}" >&2
+		exit 8
+	fi
+elif [ "$ptfname" != "$dsrest" ]; then	
+	ptffile=$(echo ${ptfname} | tr '[:lower:]' '[:upper:]');
+	dls ${ptffile} >/dev/null 2>&1
+	exists=$?
+	if [ ${exists} -gt 0 ]; then
+		echo "smpfromfile: Unable to find ptf file at dataset ${ptfname}" >&2
+		exit 8
+	fi
 else
-        zosfile=$2
+	hfsfile="${ZOSPM_SRC_ZFSROOT}ptf/${ussname}/${ptfname}"
+	if [ -f "${hfsfile}" ]; then
+		ptffile="${hfsfile}"
+	else
+		llq=$(echo ${ptfname} | tr '[:lower:]' '[:upper:]');
+		dsfile="${ZOSPM_SRC_HLQ}PTF.${zosname}.${llq}"
+		dls ${dsfile} >/dev/null 2>&1
+		exists=$?
+		if [ ${exists} -gt 0 ]; then 
+			echo "smpfromfile: Unable to find ${ptfname} in HFS file: ${hfsfile} or dataset ${dsfile}" >&2
+			exit $exists
+		fi
+		ptffile="${dsfile}"
+	fi
 fi
-
-smpptfin=$(echo ${zosfile} | tr '[:lower:]' '[:upper:]');
+		
+smpptfin="${ptffile}"
 prefix=`echo "${zosname}" | awk '{ print substr($1, 0, 3) }'`
 
 out=`receivefromzos ${zosname} ${smpptfin}`; 
