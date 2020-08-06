@@ -645,7 +645,7 @@ fi
 sw=$2
 ussname=$(echo ${sw} | tr '[:upper:]' '[:lower:]');
 zosname=$(echo ${sw} | tr '[:lower:]' '[:upper:]');
-zosfile=$(echo ${3} | tr '[:lower:]' '[:upper:]');
+file="$3"
 
 # Check the version of zoautils is recent enough
 zoaversion=`zoaversion`
@@ -744,7 +744,7 @@ case ${verb} in
 		fi
 		;;
         smpreceiveptf )
-                out=`smpfromfile ${opts} ${sw} ${zosfile}`;
+                out=`smpfromfile ${opts} ${sw} ${file}`;
                 rc=$?
                 if [ $rc -gt 0 ]; then
                         echo "${out}" >&2

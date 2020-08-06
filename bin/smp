@@ -142,7 +142,13 @@ if [ ${verbose} -gt 0 ]; then
 	start=`date +%H:%M:%S`
 	echo "${start} gimsmp started" >&2
 fi
-mvscmdauth ${opts} --pgm=gimsmp --smpcsi=${SMPCSI} --smpwkdir=${SMPWKDIR} --smpptfin=${SMPPTFIN} --smplog=${SMPLOG} --smprpt=${SMPRPT} --smplist=${SMPLIST} --smpnts=${SMPNTS} --client=${SMPCLIENT} --server=${SMPSERVER} --sysprint=${SYSPRINT} --smpout=stdout --smpcntl=stdin
+hfsptfin=${SMPPTFIN#/*}
+if [ "${hfsptfin}" = "${SMPPTFIN}" ]; then
+	ptfindcbopts=''
+else
+	ptfindcbopts=',filedata=binary,recfm=fb,lrecl=80'
+fi
+mvscmdauth ${opts} --pgm=gimsmp --smpcsi=${SMPCSI} --smpwkdir=${SMPWKDIR} "--smpptfin=${SMPPTFIN}${ptfindcbopts}" --smplog=${SMPLOG} --smprpt=${SMPRPT} --smplist=${SMPLIST} --smpnts=${SMPNTS} --client=${SMPCLIENT} --server=${SMPSERVER} --sysprint=${SYSPRINT} --smpout=stdout --smpcntl=stdin
 rc=$?
 if [ ${rc} = 0 ]; then
 	unlink "${SMPRPT}" 2>/dev/null
