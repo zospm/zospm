@@ -548,7 +548,7 @@ deconfigure() {
 	return $?
 }
 
-install_verbs="prodreq smpconfig receive smpcrdddef proddsalloc smpapplycheck smpapply smpacceptcheck smpaccept zospmarchive"
+install_verbs="smpprodreq smpconfig smpreceive smpcrdddef proddsalloc smpapplycheck smpapply smpacceptcheck smpaccept zospmarchive"
 update_verbs="smpapplycheck smpapply zospmarchive"
 
 debug=0
@@ -751,7 +751,7 @@ case ${verb} in
                         exit $rc
                 fi
                 ;;
-	prodreq )
+	smpprodreq )
 		out=`prodreq ${opts} ${sw}`
 
 		rc=$?
