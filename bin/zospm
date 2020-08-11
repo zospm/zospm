@@ -37,7 +37,7 @@ msg() {
 #
 syntax() {
 	echo "\
-zospm [-cvdfrw] search|order|smpreceiveptf|install|update|receivezos|configure|deconfigure|uninstall <software>
+zospm [-cvdfrw] search|order|smpreceiveptf|install|update|configure|deconfigure|uninstall <software>
 	and <software> is the software to search for
 	(Note that install invokes several functions which are: ${install_verbs})
 	-c: clean files before processing (e.g. delete SMP/E CSI datasets) 
@@ -320,7 +320,7 @@ refresh() {
 	updateInPlace "${sw}" "${zospmroot}" "${root}" 
 }
 
-receive() {
+smpreceive() {
 	props="${ZOSPM_WORKROOT}/order/${ussname}order.json"
 	zospmpropse "${ussname}" order "${props}"
 		
@@ -355,8 +355,8 @@ receive() {
 	return $rc
 }
 
-prodreq() {
-	zospmlog "prodreq" $*
+smpprodreq() {
+	zospmlog "smpprodreq" $*
 		
 	tmp_frspace=$(df -k ${ZOSPM_TMP} | tail -1 | awk '{print $3}' | awk -F'/' '{print $1}')
 	if [ "${tmp_frspace}" -lt "${ZOSPM_TMP_MINSPACE}" ]; then
@@ -736,7 +736,7 @@ case ${verb} in
 		fi
 		;;
 	smpreceive )
-		out=`receive ${opts} ${sw}`; 
+		out=`smpreceive ${opts} ${sw}`; 
 		rc=$? 
 		if [ $rc -gt 0 ]; then
 			echo "${out}" >&2
@@ -752,7 +752,7 @@ case ${verb} in
                 fi
                 ;;
 	smpprodreq )
-		out=`prodreq ${opts} ${sw}`
+		out=`smpprodreq ${opts} ${sw}`
 
 		rc=$?
 		if [ $verbose -gt 0 ]; then
