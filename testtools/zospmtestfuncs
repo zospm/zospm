@@ -35,15 +35,15 @@ runtests() {
 				parms=''
 			fi
 			if [ -e ${name}.expected ]; then
-				${test} ${parms} >${name}.actual 2>&1
+				./${test} ${parms} >${name}.actual 2>&1
 				ediff -Z ${name}.expected ${name}.actual
 				rc=$?
 			else
-				${test} ${parms}
+				./${test} ${parms}
 				rc=$?
 			fi
 			if [ ${rc} -gt ${maxrc} ]; then
-				${test} -dv ${parms}
+				./${test} -dv ${parms}
 				echo "Failed test ${name}"
 				exit $rc
 				 maxrc=${rc}
