@@ -4,3 +4,5 @@ bin/readparent
 bin/readprops
 bin/readreq
 bin/readparent
+bin/httpsget
+bin/httpspost
