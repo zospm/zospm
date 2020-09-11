@@ -13,11 +13,20 @@ user=''
 password=''
 url=''
 outfile=''
+keyring='*AUTH*/*'
+clientauthlabel=''
 
 do while SUBSTR(opt,1,1) = '-'
   if opt = '-v' then do
     verbose = 1
     parse var rest tracefile opt rest
+  end
+  else if opt = '-V' then do
+    Say 'httpsget V101' 
+    Return 0
+  end
+  else if opt = '-l' then do
+    parse var rest clientauthlabel opt rest
   end
   else if opt = '-u' then do
     parse var rest userpassword opt rest
@@ -57,7 +66,7 @@ end
  call HTTP_getToolkitConstants
 
  connectionHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_CONNECTION)
- call HTTP_setupConnection verbose, connectionURI, connectionPort, tracefile
+ call HTTP_setupConnection verbose, connectionURI, connectionPort, tracefile, keyring, clientauthlabel
  call HTTP_connect verbose
 
  requestHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_HTTPREQUEST)
@@ -84,10 +93,12 @@ end
 
 Syntax:Procedure
 Trace 'o'
-  call SayErr "Syntax: httpsget [-o <outfile>|-v <tracefile>|-u <user:password>] <url>"
+  call SayErr "Syntax: httpsget [-o <outfile>|-v <tracefile>|-u <user:password>|-l <client-certificate-label>]* <url>"
+  call SayErr "  -V  : print out the version of httpsget in the form: httpsget Vvrm (currently V101)"
   call SayErr "  -o  : location to write output to (default is stdout). No data translation performed"
   call SayErr "  -v  : verbose output to stderr and detailed trace file written to <tracefile>"
   call SayErr "  -u  : user and password to be passed to <url>. Defaults to no userid or password"
+  call SayErr "  -l  : client certificate label to use instead of general SSL CA lookup"
   call SayErr " <url>: web location to read file from, in the form https://<uri>/<path>" 
 exit 4
 
@@ -155,7 +166,7 @@ parse arg verbose, handle, key, val
 
 HTTP_setupConnection:Procedure expose connectionHandle
 trace 'o'
-parse arg verbose, uri, port, tracefile
+parse arg verbose, uri, port, tracefile, keyring, clientauthlabel
 
  handleName="connectionHandle"
  if verbose then do
@@ -167,7 +178,11 @@ parse arg verbose, uri, port, tracefile
  call HTTP_hwthset verbose, handleName, "HWTH_OPT_COOKIETYPE", "HWTH_COOKIETYPE_SESSION"
  call HTTP_hwthset verbose, handleName, "HWTH_OPT_USE_SSL", "HWTH_SSL_USE"
  call HTTP_hwthset verbose, handleName, "HWTH_OPT_SSLKEYTYPE", "HWTH_SSLKEYTYPE_KEYRINGNAME"
- call HTTP_hwthset verbose, handleName, "HWTH_OPT_SSLKEY", "*AUTH*/*"
+ call HTTP_hwthset verbose, handleName, "HWTH_OPT_SSLKEY", keyring
+
+ if clientauthlabel ^= '' then do
+   call HTTP_hwthset verbose, handleName, "HWTH_OPT_SSLCLIENTAUTHLABEL", clientauthlabel
+ end
  call HTTP_hwthset verbose, handleName, "HWTH_OPT_SSLVERSION", "HWTH_SSLVERSION_TLSv12"
  call HTTP_hwthset verbose, handleName, "HWTH_OPT_XDOMAIN_REDIRECTS", "HWTH_XDOMAIN_REDIRS_ALLOWED"
 
