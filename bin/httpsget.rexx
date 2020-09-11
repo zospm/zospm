@@ -70,7 +70,7 @@ end
  call HTTP_connect verbose
 
  requestHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_HTTPREQUEST)
- call HTTP_setupRequest verbose, user, password, requestPath, connectionURI
+ call HTTP_setupRequest verbose, user, password, requestPath, connectionURI, "HWTH_HTTP_REQUEST_GET", ''
 
  ExpectedResponseStatus = 200
  responseBody = ''
@@ -80,7 +80,12 @@ end
     call writeData outfile
  end
  else do
-    Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
+    If ResponseStatusCode == EmptyResponseStatus then do
+      exit 0
+    End
+    Else Do
+      Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
+    End
     exit 16
  end
 

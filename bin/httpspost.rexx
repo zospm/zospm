@@ -67,6 +67,8 @@ if connectionPort == '' then do
   connectionPort = 443
 end
 
+ call readData infile
+
  call HTTP_getToolkitConstants
 
  connectionHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_CONNECTION)
@@ -74,9 +76,10 @@ end
  call HTTP_connect verbose
 
  requestHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_HTTPREQUEST)
- call HTTP_setupRequest verbose, user, password, requestPath, connectionURI
+ call HTTP_setupRequest verbose, user, password, requestPath, connectionURI, "HWTH_HTTP_REQUEST_POST", requestBody
 
  ExpectedResponseStatus = 200
+ EmptyResponseStatus = 204
  responseBody = ''
  responseStatusCode=HTTP_request(verbose)
 
@@ -84,8 +87,10 @@ end
     call writeData outfile
  end
  else do
-    Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
-    exit 16
+    If ResponseStatusCode <> EmptyResponseStatus then do
+      Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
+      exit 16
+    End
  end
 
  call HTTP_terminate verbose, requestHandle, HWTH_NOFORCE
