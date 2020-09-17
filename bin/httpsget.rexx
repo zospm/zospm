@@ -28,6 +28,9 @@ do while SUBSTR(opt,1,1) = '-'
   else if opt = '-l' then do
     parse var rest clientauthlabel opt rest
   end
+  else if opt = '-r' then do
+    parse var rest keyring opt rest
+  end
   else if opt = '-u' then do
     parse var rest userpassword opt rest
     parse var userpassword user':'password 
@@ -98,11 +101,12 @@ end
 
 Syntax:Procedure
 Trace 'o'
-  call SayErr "Syntax: httpsget [-o <outfile>|-v <tracefile>|-u <user:password>|-l <client-certificate-label>]* <url>"
+  call SayErr "Syntax: httpsget [-o <outfile>|-v <tracefile>|-u <user:password>|-l <client-certificate-label>|-r <key-ring>]* <url>"
   call SayErr "  -V  : print out the version of httpsget in the form: httpsget Vvrm (currently V101)"
   call SayErr "  -o  : location to write output to (default is stdout). No data translation performed"
   call SayErr "  -v  : verbose output to stderr and detailed trace file written to <tracefile>"
   call SayErr "  -u  : user and password to be passed to <url>. Defaults to no userid or password"
   call SayErr "  -l  : client certificate label to use instead of general SSL CA lookup"
+  call SayErr "  -r  : SSL keyring to use instead of default AUTH*/*"
   call SayErr " <url>: web location to read file from, in the form https://<uri>/<path>" 
 exit 4
