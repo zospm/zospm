@@ -16,39 +16,57 @@ outfile=''
 keyring='*AUTH*/*'
 clientauthlabel=''
 
-do while SUBSTR(opt,1,1) = '-'
-  if opt = '-v' then do
-    verbose = 1
-    parse var rest tracefile opt rest
+argc=__argv.0
+firstAfter=argc+1
+__argv.firstAfter=''
+urlIndex=firstAfter
+do i= 2 to argc
+  opt=__argv.i
+  if (SUBSTR(opt,1,1) <> '-') then do
+    urlIndex=i
+    leave
   end
-  else if opt = '-V' then do
-    Say 'httpsget V101' 
-    Return 0
-  end
-  else if opt = '-l' then do
-    parse var rest clientauthlabel opt rest
-  end
-  else if opt = '-r' then do
-    parse var rest keyring opt rest
-  end
-  else if opt = '-u' then do
-    parse var rest userpassword opt rest
-    parse var userpassword user':'password 
-  end  
-  else if opt = '-o' then do
-    parse var rest outfile opt rest
-  end  
-  else if opt = '-?' then do
-    call Syntax
-  end  
-  else do
-    call SayErr 'Unknown Option: ' opt ' ignored'
-    parse var rest opt rest
+  select
+    when opt='-v' then do
+      verbose=1
+    end
+    when opt='-?' then do
+      Call Syntax
+    end
+    when opt='-V' then do
+      Say 'httpspost V101'
+      Return 0
+    end
+    when opt='-l' then do
+      next=i+1
+      clientauthlabel=__argv.next
+      i=next
+    end
+    when opt='-r' then do
+      next=i+1
+      keyring=__argv.next
+      i=next
+    end
+    when opt='-o' then do
+      next=i+1
+      outfile=__argv.next
+      i=next
+    end
+    when opt='-u' then do
+      next=i+1
+      userpassword=__argv.next
+      parse var userpassword user':'password
+      i=next
+    end
+    otherwise do
+      call SayErr 'Unknown Option: ' opt ' ignored'
+    end
   end
 end
-parms = opt rest
-parse var parms url .
-
+if password <> '' then do
+  clientauthlabel=''
+end
+url=__argv.urlIndex
 if url == '' then do
   call Syntax
 end
