@@ -4,9 +4,6 @@
  * For syntax: httpspost -?
  */
 trace 'o'
-parse arg parms
-
-parse var parms opt rest
 
 verbose=0
 user=''
@@ -17,38 +14,62 @@ outfile=''
 keyring='*AUTH*/*'
 clientauthlabel=''
 
-do while SUBSTR(opt,1,1) = '-'
-  if opt = '-v' then do
-    verbose = 1
-    parse var rest tracefile opt rest
+argc=__argv.0
+firstAfter=argc+1
+__argv.firstAfter=''
+urlIndex=firstAfter
+do i= 2 to argc
+  opt=__argv.i
+  if (SUBSTR(opt,1,1) <> '-') then do
+    urlIndex=i
+    leave
   end
-  else if opt = '-V' then do
-    Say 'httpspost V101' 
-    Return 0
-  end
-  else if opt = '-l' then do
-    parse var rest clientauthlabel opt rest
-  end
-  else if opt = '-u' then do
-    parse var rest userpassword opt rest
-    parse var userpassword user':'password 
-  end  
-  else if opt = '-i' then do
-    parse var rest infile opt rest
-  end  
-  else if opt = '-o' then do
-    parse var rest outfile opt rest
-  end  
-  else if opt = '-?' then do
-    call Syntax
-  end  
-  else do
-    call SayErr 'Unknown Option: ' opt ' ignored'
-    parse var rest opt rest
+  select
+    when opt='-v' then do
+      verbose=1
+    end
+    when opt='-?' then do
+      Call Syntax
+    end
+    when opt='-V' then do
+      Say 'httpspost V101' 
+      Return 0
+    end
+    when opt='-l' then do
+      next=i+1
+      clientauthlabel=__argv.next
+      i=next
+    end
+    when opt='-r' then do
+      next=i+1
+      keyring=__argv.next
+      i=next
+    end
+    when opt='-i' then do
+      next=i+1
+      infile=__argv.next
+      i=next
+    end
+    when opt='-o' then do
+      next=i+1
+      outfile=__argv.next
+      i=next
+    end
+    when opt='-u' then do
+      next=i+1
+      userpassword=__argv.next
+      parse var userpassword user':'password 
+      i=next
+    end
+    otherwise do
+      call SayErr 'Unknown Option: ' opt ' ignored'
+    end
   end
 end
-parms = opt rest
-parse var parms url .
+if password <> '' then do
+  clientauthlabel=''
+end 
+url=__argv.urlIndex
 
 if url == '' then do
   call Syntax
@@ -67,6 +88,8 @@ if connectionPort == '' then do
   connectionPort = 443
 end
 
+ call readData infile
+
  call HTTP_getToolkitConstants
 
  connectionHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_CONNECTION)
@@ -74,9 +97,10 @@ end
  call HTTP_connect verbose
 
  requestHandle=HTTP_hwthinit(verbose, HWTH_HANDLETYPE_HTTPREQUEST)
- call HTTP_setupRequest verbose, user, password, requestPath, connectionURI
+ call HTTP_setupRequest verbose, user, password, requestPath, connectionURI, "HWTH_HTTP_REQUEST_POST", requestBody
 
  ExpectedResponseStatus = 200
+ EmptyResponseStatus = 204
  responseBody = ''
  responseStatusCode=HTTP_request(verbose)
 
@@ -84,8 +108,10 @@ end
     call writeData outfile
  end
  else do
-    Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
-    exit 16
+    If ResponseStatusCode <> EmptyResponseStatus then do
+      Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
+      exit 16
+    End
  end
 
  call HTTP_terminate verbose, requestHandle, HWTH_NOFORCE
@@ -97,12 +123,13 @@ end
 
 Syntax:Procedure
 Trace 'o'
-  call SayErr "Syntax: httpspost [-i <infile>|-o <outfile>|-v <tracefile>|-u <user:password>|-l <client-certificate-label>]* <url>"
+  call SayErr "Syntax: httpspost [-i <infile>|-o <outfile>|-v <tracefile>|-u <user:password>|-l <client-certificate-label>|-r <key-ring>]* <url>"
   call SayErr "  -V  : print out the version of httpspost in the form: httpspost Vvrm (currently V101)"
   call SayErr "  -i  : location to read input from (default is stdin). No data translation performed"
   call SayErr "  -o  : location to write output to (default is stdout). No data translation performed"
   call SayErr "  -v  : verbose output to stderr and detailed trace file written to <tracefile>"
   call SayErr "  -u  : user and password to be passed to <url>. Defaults to no userid or password"
   call SayErr "  -l  : client certificate label to use instead of general SSL CA lookup"
+  call SayErr "  -r  : SSL keyring to use instead of default AUTH*/*"
   call SayErr " <url>: web location, in the form https://<uri>/<path>" 
 exit 4

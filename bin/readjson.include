@@ -90,6 +90,13 @@ openJSON:Procedure Expose parserHandle objectHandle HWTJ_OK
   objectHandle=0
   return 0
 
+transform:Procedure
+  Parse arg name
+
+  name=translate(name)
+  name=translate(name,'_','-')
+  return name
+
 /*
  * read a single entry and update the stem with the value(s)
  * of the entry
@@ -257,7 +264,7 @@ readJSONObject:Procedure Expose json. opts. HWTJ_OK
     end
 
     index = objectEntryIndex+1
-    entryName = translate(entryName)
+    entryName = transform(entryName)
     cmd = stem || '.field.' || index || ' = ' || entryName
     if (opts.verbose) then do
       Say cmd
