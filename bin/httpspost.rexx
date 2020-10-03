@@ -13,6 +13,7 @@ infile=''
 outfile=''
 keyring='*AUTH*/*'
 clientauthlabel=''
+tracefile=''
 
 argc=__argv.0
 firstAfter=argc+1
@@ -27,12 +28,15 @@ do i= 2 to argc
   select
     when opt='-v' then do
       verbose=1
+      next=i+1
+      tracefile=__argv.next
+      i=next
     end
     when opt='-?' then do
       Call Syntax
     end
     when opt='-V' then do
-      Say 'httpspost V101' 
+      call SayErr 'httpspost V101' 
       Return 0
     end
     when opt='-l' then do
@@ -109,7 +113,7 @@ end
  end
  else do
     If ResponseStatusCode <> EmptyResponseStatus then do
-      Say 'Bad response received: ' ResponseStatusCode ' from http request.' 
+      call SayErr 'Bad response received: ' ResponseStatusCode ' from http request.' 
       exit 16
     End
  end
