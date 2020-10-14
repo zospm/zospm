@@ -64,12 +64,13 @@ openJSON:Procedure Expose parserHandle objectHandle HWTJ_OK
     return 16
   end
 
-  address mvs 'execio * diskr stdin (stem data. finis'
-  stream=''
-  len.0 = data.0
-  do i=1 to data.0
-    len.i=length(data.i)
-    stream=stream||data.i
+  call syscalls 'ON'
+  address syscall
+  fd=0
+  'read' fd 'stream' 16000000
+  if retval=-1 then do
+    call Error 'Internal Error: Unable to read stdin. Error codes' errno errnojr, diagArea.
+    return 16
   end
 
   address hwtjson "hwtjpars ",
