@@ -14,11 +14,15 @@ cat readparent.rexx readjson.include >readparent
 cat readprops.rexx readjson.include >readprops
 cat readreq.rexx readjson.include >readreq
 cat httpsget.rexx httpssvc.include >httpsget
+cat httpsput.rexx httpssvc.include >httpsput
 cat httpspost.rexx httpssvc.include >httpspost
+cat httpsdelete.rexx httpssvc.include >httpsdelete
 chmod u+x readbom
 chmod u+x readchild
 chmod u+x readparent
 chmod u+x readprops
 chmod u+x readreq
 chmod u+x httpsget
+chmod u+x httpsput
 chmod u+x httpspost
+chmod u+x httpsdelete
