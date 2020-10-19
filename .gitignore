@@ -6,3 +6,5 @@ bin/readreq
 bin/readparent
 bin/httpsget
 bin/httpspost
+bin/httpsdelete
+bin/httpsput
