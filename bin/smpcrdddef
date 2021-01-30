@@ -52,11 +52,18 @@ done
 targdddefs=`echo "${libs}" | awk '($2 == "ZFS" && $5 == "T") {print $1","$6}'`
 for targddzfs in ${targdddefs}; do
  targdddef=`echo "${targddzfs}" | awk -F, '{print $1}'`
- dddefpath=`echo "${targddzfs}" | awk -F, '{print $2}'`
+ dddefs=`echo "${targddzfs}" | awk -F, '{print $2}' | tr ';' ' '`
+ for dddef in ${dddefs}; do
+   dd=${dddef%%:*}                                                              
+   path=${dddef##*:}
+   if [ "${dd}" = "${path}" ]; then 
+     dd="${targdddef}"
+   fi
  smpuclin="${smpuclin}
- REP DDDEF(${targdddef})
- PATH('${ZOSPM_SRC_ZFSROOT}${dddefpath}').
+   REP DDDEF(${dd})
+   PATH('${ZOSPM_SRC_ZFSROOT}${path}').
 "
+ done   
 done
 
 

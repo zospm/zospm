@@ -139,8 +139,7 @@ out=`receivefromnetwork ${zosname}`;
 rc=$? 
 if [ $rc -gt 0 ]; then
 	echo "SMP/E FROM Network failed with return code $rc" >&2
-else
-	echo "${out}" 
+	echo "${out}" >&2
 fi
 
 exit $rc

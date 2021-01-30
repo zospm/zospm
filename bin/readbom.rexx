@@ -29,7 +29,6 @@ Arg swname .
         p = json.software.el.datasets.d.primary
         s = json.software.el.datasets.d.secondary
         zn= json.software.el.datasets.d.zones.0
-        zn= 1
         if (zn <> 1) then do
           call SayErr 'readbom: Expected exactly one zone for dataset: ' name 'but:' zn 'were specified.'
           return 4
@@ -41,7 +40,21 @@ Arg swname .
         else do
           select 
             when (t = 'ZFS') then do
-              w = json.software.el.datasets.d.dddefpath
+              w = ''
+              if (symbol("json.software."el".datasets."d".dddefpath.0") = 'LIT') then do
+                w = json.software.el.datasets.d.dddefpath
+              end
+              else do
+                do p = 1 to json.software.el.datasets.d.dddefpath.0
+                  entry=json.software.el.datasets.d.dddefpath.p
+                  if (w = '') then do
+                    w = entry
+                  end
+                  else do
+                    w = w';'entry
+                  end
+                end
+              end
               x = json.software.el.datasets.d.mountpnt
               y = json.software.el.datasets.d.leaves
               say n t p s z w x y

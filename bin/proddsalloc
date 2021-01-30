@@ -39,6 +39,10 @@ crtzfs() {
 	secondary="$3"
 	mountpnt="$4"
 	leaves="$5"
+
+	if [ "${zfsname}" = '' ]; then
+		return 0
+	fi
 	mkdir -p -m 755 ${root}${mountpnt}
 	rc=$?
 	if [ $rc -gt 0 ]; then

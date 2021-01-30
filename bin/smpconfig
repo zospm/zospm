@@ -117,7 +117,7 @@ definesmpcntl() {
 
     ADD GLOBALZONE
           OPTIONS(${PFX}G)
-          SREL(Z038)
+          SREL(Z038,P115,C150,P004)
           ZONEINDEX(
                     (${PFX}T,${ZOSPM_SRC_HLQ}${PFX}T.TARGET.CSI,TARGET)
                     (${PFX}D,${ZOSPM_SRC_HLQ}${PFX}D.DLIB.CSI,DLIB)
@@ -151,7 +151,7 @@ definesmpcntl() {
   UCLIN.
     ADD TARGETZONE(${PFX}T)
           OPTIONS(${PFX}G)
-          SREL(Z038)
+          SREL(Z038,P115,C150,P004)
           RELATED(${PFX}D).
     ADD DDDEF(SMPDEBUG) SYSOUT(*).
     ADD DDDEF(SMPLIST)  SYSOUT(*).
@@ -187,7 +187,7 @@ definesmpcntl() {
   UCLIN.
     ADD DLIBZONE(${PFX}D)
           OPTIONS(${PFX}G)
-          SREL(Z038)
+          SREL(Z038,P115,C150,P004)
           ACCJCLIN
           RELATED(${PFX}T).
     ADD DDDEF(SMPDEBUG) SYSOUT(*).
