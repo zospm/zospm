@@ -28,13 +28,16 @@ zosname=$(echo $sw | tr '[:lower:]' '[:upper:]');
 prefix=`echo "${ussname}" | awk '{ print substr($sw, 0, 3) }'`
 dunzipout="${ZOSPM_TMP}/$$dzip.out"
 
-dunzip -s1G "${ZOSPM_TMP}/${ussname}.dzp" "${ZOSPM_TGT_HLQ%.*}" >${dunzipout} 2>&1
+dunzip -s1G -H "${ZOSPM_TGT_HLQ%.*}" "${ZOSPM_TMP}/${ussname}.dzp" >${dunzipout} 2>&1
 rc=$?
 if [ $rc -gt 4 ]; then
-	# Filter on 'empty dataset' (0ADR744W) message and if that is the only non-informational, treat the unzip as a pass
-	output=`cat "${dunzipout}" | awk '/^0ADR*/ { if (substr($1,8,1) != "I") { if ($1 != "0ADR744W") { print $1; } } }'`
+	# Filter on 'empty dataset' (ADR744W) message and if that is the only non-informational, treat the unzip as a pass
+	output=`cat "${dunzipout}" | awk '/^[0| ]*ADR*/ { if (substr($1,8,1) != "I" && substr($1,7,1) != "I") { if ($1 != "0ADR744W") { print $1; } } }'`
 	if [ "${output}" != "" ]; then
 		echo "zospmrestore: Restore of archive ${archive} failed." >&2
+		echo "zospmrestore: Problematic messages:" >&2
+		echo "${output}" >&2
+		echo "zospmrestore: Full set of messages:" >&2
 		cat "${dunzipout}" >&2
 		rm -f "${dunzipout}"
 		exit $rc
@@ -44,4 +47,4 @@ rm -f "${dunzipout}"
 
 zospmmount -m -t $sw
 
-exit $rc
+exit $?
