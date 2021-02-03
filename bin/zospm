@@ -656,8 +656,8 @@ fi
 year=${zoaversion%%/*}
 yearmonth=${zoaversion%/*}
 month=${yearmonth##*/}
-if [ $year -lt 2020 ] || [ $month -lt 3 ]; then
-	echo "Z Open Automation Utilities 2020/03/01 or later is required to run zospm. Your utilities are too old: ${zoaversion}" >&2
+if [ $year -lt 2020 ] || [ $month -lt 9 ]; then
+	echo "Z Open Automation Utilities 2020/09/01 or later is required to run zospm. Your utilities are too old: ${zoaversion}" >&2
 	exit 16
 fi
 if [ "${ZOSPM_REPOROOT}" = '' ]; then
